@@ -1,0 +1,3 @@
+id,fasta
+063_STEC,data/truth_assemblies/063_STEC.ref.fa
+CFT073,data/truth_assemblies/CFT073.ref.fa
