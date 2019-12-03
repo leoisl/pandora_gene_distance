@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pandas = "*"
+pysam = "==0.15.2"
+jupyter = "*"
+seaborn = "*"
+intervaltree = "*"
+snakemake = "*"
+scikit-allel = "*"
+editdistance = "*"
+dash = "*"
+
+[dev-packages]
+pytest = "*"
+coverage = "*"
