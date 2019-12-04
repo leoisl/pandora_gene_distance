@@ -17,7 +17,7 @@ output_folder = config['output_folder']
 pandora_vcf_ref = config['pandora_vcf_ref']
 truth_assemblies = pd.read_csv(config["truth_assemblies"])
 references = pd.read_csv(config["references"])
-all_assemblies = pd.concat([truth_assemblies, references], ignore_index=True)
+assemblies_and_refs = pd.concat([truth_assemblies, references], ignore_index=True)
 # pandora_evaluation_folder = config["pandora_evaluation_folder"]
 
 
@@ -28,7 +28,7 @@ all_assemblies = pd.concat([truth_assemblies, references], ignore_index=True)
 # ======================================================
 truth_assemblies = truth_assemblies.set_index(["id"], drop=False)
 references = references.set_index(["id"], drop=False)
-all_assemblies = all_assemblies.set_index(["id"], drop=False)
+assemblies_and_refs = assemblies_and_refs.set_index(["id"], drop=False)
 
 
 # ======================================================
@@ -46,22 +46,34 @@ with pysam.FastaFile(pandora_vcf_ref) as fasta_file:
 # files.extend(all_genes_filepaths_in_vcf_ref)
 
 # gene mappings
-def get_gene_mapping_files(df, all_genes_in_vcf_ref):
-    gene_mapping_files = []
-    for index, row in df.iterrows():
-        id = row["id"]
-        for gene in all_genes_in_vcf_ref:
-            gene_mapping_files.append(f"{output_folder}/map_gene_from_vcf_ref_to_truth_or_ref/{gene}~~~{id}.sam")
-    return gene_mapping_files
+gene_mapping_files = []
+for index, row in assemblies_and_refs.iterrows():
+    id = row["id"]
+    for gene in all_genes_in_vcf_ref:
+        gene_mapping_files.append(f"{output_folder}/map_gene_from_vcf_ref_to_truth_or_ref/{gene}~~~{id}.bowtie.sam")
+files.extend(gene_mapping_files)
 
-files.extend(get_gene_mapping_files(truth_assemblies, all_genes_in_vcf_ref))
-files.extend(get_gene_mapping_files(references, all_genes_in_vcf_ref))
 
+# genes in truth/ref
+genes_in_truth_or_ref = []
+for index, row in assemblies_and_refs.iterrows():
+    id = row["id"]
+    for gene in all_genes_in_vcf_ref:
+        genes_in_truth_or_ref.append(f"{output_folder}/genes_from_truth_or_ref/{gene}~~~{id}.csv")
+files.extend(genes_in_truth_or_ref)
+
+
+# edit distance files
+edit_distances_files = []
+for gene in all_genes_in_vcf_ref:
+    for truth_index, row in truth_assemblies.iterrows():
+        truth_id = row["id"]
+        for ref_index, row in references.iterrows():
+            ref_id = row["id"]
+            edit_distances_files.append(f"{output_folder}/edit_distances/{gene}~~~{truth_id}~~~{ref_id}.edit_distance.csv")
+files.extend(edit_distances_files)
 
 print(f"Required files: {files}")
-
-
-
 
 # ======================================================
 # Rules
