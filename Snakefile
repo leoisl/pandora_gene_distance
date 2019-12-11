@@ -18,7 +18,7 @@ pandora_vcf_ref = config['pandora_vcf_ref']
 truth_assemblies = pd.read_csv(config["truth_assemblies"])
 references = pd.read_csv(config["references"])
 assemblies_and_refs = pd.concat([truth_assemblies, references], ignore_index=True)
-# pandora_evaluation_folder = config["pandora_evaluation_folder"]
+pandora_eval_precision_reports_from_probe_mappings_folder = config["pandora_eval_precision_reports_from_probe_mappings"]
 
 
 
@@ -73,7 +73,6 @@ for gene in all_genes_in_vcf_ref:
             edit_distances_files.append(f"{output_folder}/edit_distances/{gene}~~~{truth_id}~~~{ref_id}.edit_distance.csv")
 files.extend(edit_distances_files)
 
-print(f"Required files: {files}")
 
 # ======================================================
 # Rules
@@ -82,4 +81,5 @@ rule all:
     input: files
 
 rules_dir = Path("rules/")
+include: str(rules_dir / "indexing_and_mapping.smk")
 include: str(rules_dir / "finding_distance_between_loci_in_assemblies_and_refs.smk")
