@@ -90,3 +90,19 @@ rule get_edit_distance_between_genes_of_truth_assemblies_and_ref:
 
         truth_and_ref_gene_df["edit_distance"] = edit_distance
         truth_and_ref_gene_df.to_csv(output.edit_distance_between_genes_of_truth_assemblies_and_ref, index=False)
+
+
+rule concatenate_edit_distance_files:
+    input:
+         edit_distances_files = edit_distances_files
+    output:
+         all_edit_distance_files_concatenated = f"{output_folder}/edit_distances/all_edit_distances.csv"
+    threads: 1
+    resources:
+        mem_mb = lambda wildcards, attempt: 2000 * attempt
+    log:
+        "logs/concatenate_edit_distance_files/all_edit_distances.log"
+    run:
+        dfs = [pd.read_csv(file) for file in input.edit_distances_files]
+        concatenated_df = pd.concat(dfs, ignore_index=True)
+        concatenated_df.to_csv(output.all_edit_distance_files_concatenated, index=False)

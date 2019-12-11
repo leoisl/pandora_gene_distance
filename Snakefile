@@ -72,6 +72,8 @@ for gene in all_genes_in_vcf_ref:
             ref_id = row["id"]
             edit_distances_files.append(f"{output_folder}/edit_distances/{gene}~~~{truth_id}~~~{ref_id}.edit_distance.csv")
 files.extend(edit_distances_files)
+all_edit_distance_files_concatenated = f"{output_folder}/edit_distances/all_edit_distances.csv"
+files.append(all_edit_distance_files_concatenated)
 
 
 # ======================================================
