@@ -37,3 +37,20 @@ rule get_gene_truth_ref_precision_proportion_distance:
                     ("precision_ratio", lambda values: values.sum() / values.count())]
         })
         gene_truth_ref_precision_proportion_distance.to_csv(output.gene_truth_ref_precision_proportion_distance_file)
+
+
+
+rule concat_gene_truth_ref_precision_proportion_distance_files:
+    input:
+         gene_truth_ref_precision_proportion_distance_files = gene_truth_ref_precision_proportion_distance_files
+    output:
+         gene_truth_ref_precision_proportion_distance_concatenated = f"{output_folder}/get_gene_truth_ref_precision_proportion_distance/all_gene_truth_ref_precision_proportion_distance.csv"
+    threads: 1
+    resources:
+        mem_mb = lambda wildcards, attempt: 2000 * attempt
+    log:
+        "logs/concat_gene_truth_ref_precision_proportion_distance_files/all_gene_truth_ref_precision_proportion_distance.log"
+    run:
+        dfs = [pd.read_csv(file, header=[0,1,2]) for file in input.gene_truth_ref_precision_proportion_distance_files]
+        concatenated_df = pd.concat(dfs)
+        concatenated_df.to_csv(output.gene_truth_ref_precision_proportion_distance_concatenated)
