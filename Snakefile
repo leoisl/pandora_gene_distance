@@ -75,6 +75,16 @@ files.extend(edit_distances_files)
 all_edit_distance_files_concatenated = f"{output_folder}/edit_distances/all_edit_distances.csv"
 files.append(all_edit_distance_files_concatenated)
 
+# variant distances files
+variant_distance_files = []
+for truth_index, row in truth_assemblies.iterrows():
+    truth_id = row["id"]
+    for ref_index, row in references.iterrows():
+        ref_id = row["id"]
+        variant_distance_files.append(f"{output_folder}/get_variant_precision_score_distance_csv/{truth_id}~~~{ref_id}.get_variant_precision_score_distance.csv")
+files.extend(variant_distance_files)
+
+files = list(set(files))
 
 # ======================================================
 # Rules
@@ -85,3 +95,4 @@ rule all:
 rules_dir = Path("rules/")
 include: str(rules_dir / "indexing_and_mapping.smk")
 include: str(rules_dir / "finding_distance_between_loci_in_assemblies_and_refs.smk")
+include: str(rules_dir / "generating_csv_variant_and_gene_with_distances.smk")

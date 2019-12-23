@@ -12,3 +12,5 @@ evaluating_snippy_calls_output/
 logs/
 
 notebooks/\.ipynb_checkpoints/
+
+scripts/__pycache__/

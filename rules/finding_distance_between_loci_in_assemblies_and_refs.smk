@@ -38,6 +38,7 @@ rule get_truth_or_ref_gene_sequence_of_mosaic_gene:
         sam_record = sam_records[0]
 
         ref_or_truth_id = wildcards.id
+        gene_name = wildcards.gene
         with open(output.truth_or_ref_gene_sequence, "w") as truth_or_ref_gene_sequence:
             if not sam_record.is_unmapped:
                 status = "Mapped"
@@ -56,6 +57,7 @@ rule get_truth_or_ref_gene_sequence_of_mosaic_gene:
 
         df = pd.DataFrame({
             "status": [status],
+            "gene_name": [gene_name],
             "ref_or_truth_id": [ref_or_truth_id],
             "contig": [contig],
             "start": [start],
@@ -78,13 +80,17 @@ rule get_edit_distance_between_genes_of_truth_assemblies_and_ref:
         "logs/get_edit_distance_between_genes_of_truth_assemblies_and_ref/{{gene}}~~~{{truth_id}}~~~{{ref_id}}.edit_distance.log"
     run:
         truth_gene_df = pd.read_csv(input.truth_gene)
+        assert len(truth_gene_df) == 1
         ref_gene_df = pd.read_csv(input.ref_gene)
+        assert len(ref_gene_df) == 1
         truth_and_ref_gene_df = truth_gene_df.join(ref_gene_df, lsuffix="_truth_gene", rsuffix="_ref_gene")
+        assert len(truth_and_ref_gene_df) == 1
 
         if truth_and_ref_gene_df["status_truth_gene"][0] == "Mapped" and truth_and_ref_gene_df["status_ref_gene"][0] == "Mapped":
             truth_gene_seq = truth_and_ref_gene_df["sequence_truth_gene"][0]
             ref_gene_seq = truth_and_ref_gene_df["sequence_ref_gene"][0]
             edit_distance = editdistance.eval(truth_gene_seq, ref_gene_seq) / max(len(truth_gene_seq), len(ref_gene_seq))
+            assert 0 <= edit_distance <= 1
         else:
             edit_distance = -1
 
