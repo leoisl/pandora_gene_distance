@@ -53,4 +53,6 @@ rule concat_gene_truth_ref_precision_proportion_distance_files:
     run:
         dfs = [pd.read_csv(file, header=[0,1,2]) for file in input.gene_truth_ref_precision_proportion_distance_files]
         concatenated_df = pd.concat(dfs)
+        concatenated_df.columns = ["gene", "truth", "ref", "distance", "max_precision", "observed_precision", "precision_ratio"]
+        concatenated_df.set_index(["gene", "truth", "ref"], inplace=True)
         concatenated_df.to_csv(output.gene_truth_ref_precision_proportion_distance_concatenated)

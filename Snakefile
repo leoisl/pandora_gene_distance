@@ -91,8 +91,10 @@ for truth_index, row in truth_assemblies.iterrows():
         ref_id = row["id"]
         gene_truth_ref_precision_proportion_distance_files.append(f"{output_folder}/get_gene_truth_ref_precision_proportion_distance/{truth_id}~~~{ref_id}.gene_truth_ref_precision_proportion_distance.csv")
 files.extend(gene_truth_ref_precision_proportion_distance_files)
-
 files.append(f"{output_folder}/get_gene_truth_ref_precision_proportion_distance/all_gene_truth_ref_precision_proportion_distance.csv")
+
+
+files.append(f"{output_folder}/gene_distance.pdf")
 
 files = list(set(files))
 
@@ -106,3 +108,4 @@ rules_dir = Path("rules/")
 include: str(rules_dir / "indexing_and_mapping.smk")
 include: str(rules_dir / "finding_distance_between_loci_in_assemblies_and_refs.smk")
 include: str(rules_dir / "generating_csv_variant_and_gene_with_distances.smk")
+include: str(rules_dir / "plot.smk")
