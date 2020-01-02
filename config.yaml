@@ -2,4 +2,4 @@ output_folder:              evaluating_snippy_calls_output
 pandora_vcf_ref:            data/pandora_multisample.vcf_ref.fa
 truth_assemblies:           metadata/truth_assemblies.csv
 references:                 metadata/references.csv
-pandora_eval_precision_reports_from_probe_mappings: /home/leandro/git/snippy_calls_gene_distance/data/hps/nobackup/research/zi/leandro/pandora1_paper/analysis_output_pandora_default_filters_snippy_all_bwa_seed_11/precision/reports_from_probe_mappings
+pandora_eval_output_folder: data/analysis_output_pandora_default_filters_snippy_all_bwa_seed_11
