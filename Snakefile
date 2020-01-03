@@ -82,6 +82,7 @@ for truth_index, row in truth_assemblies.iterrows():
     for ref_index, row in references.iterrows():
         ref_id = row["id"]
         variant_distance_files.append(f"{output_folder}/get_variant_precision_score_distance_csv/{truth_id}~~~{ref_id}.get_variant_precision_score_distance.csv")
+        variant_distance_files.append(f"{output_folder}/get_variant_precision_score_distance_csv/{truth_id}~~~{ref_id}.get_variant_precision_score_distance.unmapped.csv")
 files.extend(variant_distance_files)
 
 gene_truth_ref_precision_proportion_distance_files = []

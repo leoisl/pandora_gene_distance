@@ -5,7 +5,8 @@ rule get_variant_precision_score_distance_csv:
          edit_distance_csv = rules.concatenate_edit_distance_files.output.all_edit_distance_files_concatenated,
          variants_calls = lambda wildcards: f"{precision_reports}/{wildcards.truth_id}/all/snippy_{wildcards.ref_id}/coverage_filter_0/strand_bias_filter_Not_App/gaps_filter_Not_App/variant_calls_probeset_report.tsv"
     output:
-         variant_precision_score_distance_file = f"{output_folder}/get_variant_precision_score_distance_csv/{{truth_id}}~~~{{ref_id}}.get_variant_precision_score_distance.csv"
+         variant_precision_score_distance_file = f"{output_folder}/get_variant_precision_score_distance_csv/{{truth_id}}~~~{{ref_id}}.get_variant_precision_score_distance.csv",
+         variant_precision_score_distance_unmapped_probes_file = f"{output_folder}/get_variant_precision_score_distance_csv/{{truth_id}}~~~{{ref_id}}.get_variant_precision_score_distance.unmapped.csv",
     threads: 1
     resources:
         mem_mb = lambda wildcards, attempt: 2000 * attempt
