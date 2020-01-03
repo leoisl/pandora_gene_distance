@@ -18,8 +18,8 @@ pandora_vcf_ref = config['pandora_vcf_ref']
 truth_assemblies = pd.read_csv(config["truth_assemblies"])
 references = pd.read_csv(config["references"])
 assemblies_and_refs = pd.concat([truth_assemblies, references], ignore_index=True)
-precision_reports = f"{config['pandora_eval_output_folder']}/precision/reports_from_probe_mappings/"
-recall_reports = f"{config['pandora_eval_output_folder']}/recall/reports_from_probe_mappings/"
+precision_reports = f"{config['pandora_eval_output_folder']}/precision/reports_from_probe_mappings"
+recall_reports = f"{config['pandora_eval_output_folder']}/recall/reports_from_probe_mappings"
 
 
 
