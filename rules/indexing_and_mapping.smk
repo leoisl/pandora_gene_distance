@@ -58,7 +58,7 @@ rule map_gene_from_vcf_ref_to_truth_or_ref_using_bwamem:
     log:
         "logs/map_gene_from_vcf_ref_to_truth_or_ref/{gene}~~~{id}.log"
     shell:
-        "bwa mem {input.truth_or_ref} {input.gene} -t {threads} -o {output.sam_file}"
+        "bwa mem {input.truth_or_ref} {input.gene} -t {threads} | samtools view -h -F 2304 > {output.sam_file}"
 
 
 rule index_fasta_file:
