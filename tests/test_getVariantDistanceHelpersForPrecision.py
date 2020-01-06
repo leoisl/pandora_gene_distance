@@ -1,5 +1,5 @@
 from unittest import TestCase
-from scripts.GetVariantDistanceHelpers import GetVariantDistanceHelpers, GetVariantDistanceHelpersForPrecision, ProbeMapsToSeveralGenes, ProbeDoesNotMapToAnyGene
+from scripts.GetVariantDistanceHelpers import GetVariantDistanceHelpers, GetVariantDistanceHelpersForPrecision, GetVariantDistanceHelpersForRecall, ProbeMapsToSeveralGenes, ProbeDoesNotMapToAnyGene
 import pandas as pd
 
 
@@ -241,3 +241,23 @@ class TestGetVariantDistanceHelpersForPrecision(TestGetVariantDistanceHelpersBas
             GetVariantDistanceHelpersForPrecision.get_gene_name_and_edit_distance_of_gene_this_vcf_probe_maps_to(df,
                                                                                                                  contig_vcf_probe_originates_from,
                                                                                                                  pos_vcf_probe_originates_from)
+
+
+class TestGetVariantDistanceHelpersForRecall(TestGetVariantDistanceHelpersBaseClass):
+    def test___get_edit_distance_of_gene_this_truth_probe_maps_to___only_maps_to_one(self):
+        df = pd.DataFrame({
+            "contig_truth_gene": ["contig_1", "contig_1"],
+            "gene_name_truth_gene": ["gene_1", "gene_2"],
+            "gene_name_ref_gene": ["gene_1", "gene_2"],
+            "edit_distance": [100, 185],
+            "start_ref_gene": [10, 12],  # should not be used here
+            "stop_ref_gene": [20, 30],  # should not be used here
+            "start_truth_gene": [1, 11],  # test should check this is used
+            "stop_truth_gene": [10, 100],  # test should check this is used
+        })
+        contig_truth_probe_originates_from = "contig_1"
+        pos_truth_probe_originates_from = 15
+
+        actual = GetVariantDistanceHelpersForRecall.get_gene_name_and_edit_distance_of_gene_this_truth_probe_maps_to\
+            (df, contig_truth_probe_originates_from, pos_truth_probe_originates_from)
+        self.assertEqual(("gene_2", 185), actual)

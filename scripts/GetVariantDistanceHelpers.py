@@ -23,7 +23,7 @@ class GetVariantDistanceHelpers:
         return edit_distance_df
 
     @staticmethod
-    def get_gene_name_and_edit_distance_of_gene_this_vcf_probe_maps_to(edit_distance_df, contig_column, start_gene_column,
+    def get_gene_name_and_edit_distance_of_gene_this_probe_maps_to(edit_distance_df, contig_column, start_gene_column,
                                                                        stop_gene_column, contig_probe_originates_from,
                                                                        pos_probe_originates_from):
         # get all genes the vcf probe maps to
@@ -61,7 +61,17 @@ class GetVariantDistanceHelpersForPrecision(GetVariantDistanceHelpers):
     @staticmethod
     def get_gene_name_and_edit_distance_of_gene_this_vcf_probe_maps_to(edit_distance_df, contig_vcf_probe_originates_from,
                                                                        pos_vcf_probe_originates_from):
-        return GetVariantDistanceHelpers.get_gene_name_and_edit_distance_of_gene_this_vcf_probe_maps_to\
+        return GetVariantDistanceHelpers.get_gene_name_and_edit_distance_of_gene_this_probe_maps_to\
             (edit_distance_df=edit_distance_df, contig_column="contig_ref_gene", start_gene_column="start_ref_gene",
              stop_gene_column="stop_ref_gene", contig_probe_originates_from=contig_vcf_probe_originates_from,
              pos_probe_originates_from=pos_vcf_probe_originates_from)
+
+
+class GetVariantDistanceHelpersForRecall(GetVariantDistanceHelpers):
+    @staticmethod
+    def get_gene_name_and_edit_distance_of_gene_this_truth_probe_maps_to(edit_distance_df, contig_truth_probe_originates_from,
+                                                                       pos_truth_probe_originates_from):
+        return GetVariantDistanceHelpers.get_gene_name_and_edit_distance_of_gene_this_probe_maps_to\
+            (edit_distance_df=edit_distance_df, contig_column="contig_truth_gene", start_gene_column="start_truth_gene",
+             stop_gene_column="stop_truth_gene", contig_probe_originates_from=contig_truth_probe_originates_from,
+             pos_probe_originates_from=pos_truth_probe_originates_from)

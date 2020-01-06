@@ -14,3 +14,5 @@ logs/
 notebooks/\.ipynb_checkpoints/
 
 scripts/__pycache__/
+
+notebooks/genes_in_all_sample\.fa

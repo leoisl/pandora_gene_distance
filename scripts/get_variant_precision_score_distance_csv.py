@@ -1,5 +1,5 @@
 import pandas as pd
-from GetVariantDistanceHelpersForPrecision import GetVariantDistanceHelpersForPrecision, ProbeDoesNotMapToAnyGene, ProbeMapsToSeveralGenes
+from GetVariantDistanceHelpers import GetVariantDistanceHelpersForPrecision, ProbeDoesNotMapToAnyGene, ProbeMapsToSeveralGenes
 import logging
 log_level = "INFO"
 logging.basicConfig(
