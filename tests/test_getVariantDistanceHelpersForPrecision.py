@@ -1,8 +1,9 @@
 from unittest import TestCase
-from scripts.GetVariantDistanceHelpersForPrecision import GetVariantDistanceHelpersForPrecision, ProbeMapsToSeveralGenes, ProbeDoesNotMapToAnyGene
+from scripts.GetVariantDistanceHelpers import GetVariantDistanceHelpers, GetVariantDistanceHelpersForPrecision, ProbeMapsToSeveralGenes, ProbeDoesNotMapToAnyGene
 import pandas as pd
 
-class TestGetVariantDistanceHelpersForPrecision(TestCase):
+
+class TestGetVariantDistanceHelpersBaseClass(TestCase):
     def assert_df_are_equal(self, df1, df2):
         self.assertEqual(df1.to_dict("records"), df2.to_dict("records"))
 
@@ -17,10 +18,13 @@ class TestGetVariantDistanceHelpersForPrecision(TestCase):
             "stop_ref_gene": [],
         })
 
+
+
+class TestGetVariantDistanceHelpers(TestGetVariantDistanceHelpersBaseClass):
     def test___get_edit_distance_df_given_truth_and_ref___empty_df(self):
         df = self.empty_edit_distance_df
 
-        actual = GetVariantDistanceHelpersForPrecision.get_edit_distance_df_given_truth_and_ref(df, "truth", "ref")
+        actual = GetVariantDistanceHelpers.get_edit_distance_df_given_truth_and_ref(df, "truth", "ref")
         expected = self.empty_edit_distance_df
 
         self.assert_df_are_equal(actual, expected)
@@ -33,7 +37,7 @@ class TestGetVariantDistanceHelpersForPrecision(TestCase):
             "status_ref_gene": ["Mapped"],
         })
 
-        actual = GetVariantDistanceHelpersForPrecision.get_edit_distance_df_given_truth_and_ref(df, "truth", "ref")
+        actual = GetVariantDistanceHelpers.get_edit_distance_df_given_truth_and_ref(df, "truth", "ref")
         expected = df
 
         self.assert_df_are_equal(actual, expected)
@@ -46,7 +50,7 @@ class TestGetVariantDistanceHelpersForPrecision(TestCase):
             "status_ref_gene": ["Mapped"],
         })
 
-        actual = GetVariantDistanceHelpersForPrecision.get_edit_distance_df_given_truth_and_ref(df, "truth", "ref")
+        actual = GetVariantDistanceHelpers.get_edit_distance_df_given_truth_and_ref(df, "truth", "ref")
         expected = self.empty_edit_distance_df
 
         self.assert_df_are_equal(actual, expected)
@@ -59,7 +63,7 @@ class TestGetVariantDistanceHelpersForPrecision(TestCase):
             "status_ref_gene": ["Mapped"],
         })
 
-        actual = GetVariantDistanceHelpersForPrecision.get_edit_distance_df_given_truth_and_ref(df, "truth", "ref")
+        actual = GetVariantDistanceHelpers.get_edit_distance_df_given_truth_and_ref(df, "truth", "ref")
         expected = self.empty_edit_distance_df
 
         self.assert_df_are_equal(actual, expected)
@@ -72,7 +76,7 @@ class TestGetVariantDistanceHelpersForPrecision(TestCase):
             "status_ref_gene": ["Mapped"],
         })
 
-        actual = GetVariantDistanceHelpersForPrecision.get_edit_distance_df_given_truth_and_ref(df, "truth", "ref")
+        actual = GetVariantDistanceHelpers.get_edit_distance_df_given_truth_and_ref(df, "truth", "ref")
         expected = self.empty_edit_distance_df
 
         self.assert_df_are_equal(actual, expected)
@@ -85,7 +89,7 @@ class TestGetVariantDistanceHelpersForPrecision(TestCase):
             "status_ref_gene": ["Unmapped"],
         })
 
-        actual = GetVariantDistanceHelpersForPrecision.get_edit_distance_df_given_truth_and_ref(df, "truth", "ref")
+        actual = GetVariantDistanceHelpers.get_edit_distance_df_given_truth_and_ref(df, "truth", "ref")
         expected = self.empty_edit_distance_df
 
         self.assert_df_are_equal(actual, expected)
@@ -99,7 +103,7 @@ class TestGetVariantDistanceHelpersForPrecision(TestCase):
             "status_ref_gene":            ["Mapped",   "Mapped",  "Mapped", "Unmapped", "Mapped",    "Mapped"],
         })
 
-        actual = GetVariantDistanceHelpersForPrecision.get_edit_distance_df_given_truth_and_ref(df, "truth", "ref")
+        actual = GetVariantDistanceHelpers.get_edit_distance_df_given_truth_and_ref(df, "truth", "ref")
         expected = pd.DataFrame({
             "ref_or_truth_id_truth_gene": ["truth"]*2,
             "ref_or_truth_id_ref_gene":   ["ref"]*2,
@@ -109,6 +113,9 @@ class TestGetVariantDistanceHelpersForPrecision(TestCase):
 
         self.assert_df_are_equal(actual, expected)
 
+
+
+class TestGetVariantDistanceHelpersForPrecision(TestGetVariantDistanceHelpersBaseClass):
     def test___get_edit_distance_of_gene_this_vcf_probe_maps_to___empty_edit_distance_df(self):
         df = self.empty_edit_distance_df
         contig_vcf_probe_originates_from = "contig"
@@ -234,12 +241,3 @@ class TestGetVariantDistanceHelpersForPrecision(TestCase):
             GetVariantDistanceHelpersForPrecision.get_gene_name_and_edit_distance_of_gene_this_vcf_probe_maps_to(df,
                                                                                                                  contig_vcf_probe_originates_from,
                                                                                                                  pos_vcf_probe_originates_from)
-
-
-
-
-    # def test_parse_field_from_header(self):
-    #     pass
-    #
-    # def test_get_variant_output_dict(self):
-    #     pass

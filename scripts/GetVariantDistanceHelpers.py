@@ -10,7 +10,7 @@ class ProbeDoesNotMapToAnyGene(Exception):
 class ProbeMapsToSeveralGenes(Exception):
     pass
 
-class GetVariantDistanceHelpersForPrecision:
+class GetVariantDistanceHelpers:
     @staticmethod
     def get_edit_distance_df_given_truth_and_ref(edit_distance_df, truth_id, ref_id):
         # restricts the edit_distance_df to this truth and ref
@@ -23,11 +23,13 @@ class GetVariantDistanceHelpersForPrecision:
         return edit_distance_df
 
     @staticmethod
-    def get_gene_name_and_edit_distance_of_gene_this_vcf_probe_maps_to(edit_distance_df, contig_vcf_probe_originates_from, pos_vcf_probe_originates_from):
+    def get_gene_name_and_edit_distance_of_gene_this_vcf_probe_maps_to(edit_distance_df, contig_column, start_gene_column,
+                                                                       stop_gene_column, contig_probe_originates_from,
+                                                                       pos_probe_originates_from):
         # get all genes the vcf probe maps to
-        df_where_probe_maps = edit_distance_df.query("contig_ref_gene == @contig_vcf_probe_originates_from and "
-                                                     "start_ref_gene <= @pos_vcf_probe_originates_from and "
-                                                     "@pos_vcf_probe_originates_from < stop_ref_gene")
+        df_where_probe_maps = edit_distance_df.query(f"{contig_column} == @contig_probe_originates_from and "
+                                                     f"{start_gene_column} <= @pos_probe_originates_from and "
+                                                     f"@pos_probe_originates_from < {stop_gene_column}")
 
         if len(df_where_probe_maps) == 0:
             raise ProbeDoesNotMapToAnyGene()
@@ -53,3 +55,13 @@ class GetVariantDistanceHelpersForPrecision:
             return return_type(match.group(1))
         else:
             return return_type()
+
+
+class GetVariantDistanceHelpersForPrecision(GetVariantDistanceHelpers):
+    @staticmethod
+    def get_gene_name_and_edit_distance_of_gene_this_vcf_probe_maps_to(edit_distance_df, contig_vcf_probe_originates_from,
+                                                                       pos_vcf_probe_originates_from):
+        return GetVariantDistanceHelpers.get_gene_name_and_edit_distance_of_gene_this_vcf_probe_maps_to\
+            (edit_distance_df=edit_distance_df, contig_column="contig_ref_gene", start_gene_column="start_ref_gene",
+             stop_gene_column="stop_ref_gene", contig_probe_originates_from=contig_vcf_probe_originates_from,
+             pos_probe_originates_from=pos_vcf_probe_originates_from)
