@@ -34,11 +34,9 @@ class GetVariantDistanceHelpers:
         if len(df_where_probe_maps) == 0:
             raise ProbeDoesNotMapToAnyGene()
         elif len(df_where_probe_maps) == 1:
-            truth_gene_name = get_first_value_of_series(df_where_probe_maps["gene_name_truth_gene"])
-            ref_gene_name = get_first_value_of_series(df_where_probe_maps["gene_name_ref_gene"])
-            assert truth_gene_name == ref_gene_name
+            gene_name = get_first_value_of_series(df_where_probe_maps["gene_name"])
             edit_distance = get_first_value_of_series(df_where_probe_maps["edit_distance"])
-            return truth_gene_name, edit_distance
+            return gene_name, edit_distance
         else:
             raise ProbeMapsToSeveralGenes()
 
