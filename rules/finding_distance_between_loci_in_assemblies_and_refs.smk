@@ -1,6 +1,6 @@
 import editdistance
 import pandas as pd
-from Bio.Seq import Seq
+from scripts.utils import reverse_complement
 
 rule get_truth_or_ref_gene_sequences:
     input:
@@ -18,18 +18,15 @@ rule get_truth_or_ref_gene_sequences:
         "../scripts/get_truth_or_ref_gene_sequences.py"
 
 
-def reverse_complement(sequence):
-    biopython_seq = Seq(sequence)
-    return str(biopython_seq.reverse_complement())
 def get_edit_distance(row):
     if row["status_truth_gene"] == "Mapped" and row["status_ref_gene"] == "Mapped":
-            truth_gene_seq = row["sequence_truth_gene"]
-            ref_gene_seq = row["sequence_ref_gene"]
-            truth_gene_seq_rc = reverse_complement(truth_gene_seq)
-            edit_distance_fw = editdistance.eval(truth_gene_seq, ref_gene_seq) / max(len(truth_gene_seq), len(ref_gene_seq))
-            edit_distance_rc = editdistance.eval(truth_gene_seq_rc, ref_gene_seq) / max(len(truth_gene_seq_rc), len(ref_gene_seq))
-            edit_distance = min(edit_distance_fw, edit_distance_rc)
-            assert 0 <= edit_distance <= 1
+        truth_gene_seq = row["sequence_truth_gene"]
+        truth_gene_seq_rc = reverse_complement(truth_gene_seq)
+        ref_gene_seq = row["sequence_ref_gene"]
+        edit_distance_fw = editdistance.eval(truth_gene_seq, ref_gene_seq) / max(len(truth_gene_seq), len(ref_gene_seq))
+        edit_distance_rc = editdistance.eval(truth_gene_seq_rc, ref_gene_seq) / max(len(truth_gene_seq_rc), len(ref_gene_seq))
+        edit_distance = min(edit_distance_fw, edit_distance_rc)
+        assert 0 <= edit_distance <= 1
     else:
         edit_distance = -1
     return edit_distance
