@@ -2,6 +2,7 @@ from pathlib import Path
 from snakemake.utils import min_version
 import pandas as pd
 import pysam
+import itertools
 
 min_version("5.1.0")
 
@@ -19,8 +20,8 @@ truth_assemblies = pd.read_csv(config["truth_assemblies"])
 references = pd.read_csv(config["references"])
 assemblies_and_refs = pd.concat([truth_assemblies, references], ignore_index=True)
 precision_reports = f"{config['pandora_eval_output_folder']}/precision/reports_from_probe_mappings"
-recall_reports = f"{config['pandora_eval_output_folder']}/recall/reports_from_probe_mappings"
-
+recall_reports = f"{config['pandora_eval_output_folder']}/recall/reports"
+truth_pairs = [(truth_1, truth_2) for truth_1, truth_2 in itertools.combinations(sorted(truth_assemblies["id"]), r=2)]
 
 
 # ======================================================
@@ -36,41 +37,29 @@ assemblies_and_refs = assemblies_and_refs.set_index(["id"], drop=False)
 # ======================================================
 files = []
 
-# add genes in vcf_ref
-all_genes_in_vcf_ref = []
-all_genes_filepaths_in_vcf_ref = []
-with pysam.FastaFile(pandora_vcf_ref) as fasta_file:
-    for gene in fasta_file.references:
-        all_genes_in_vcf_ref.append(gene)
-        all_genes_filepaths_in_vcf_ref.append(f"{output_folder}/genes_from_vcf_ref/{gene}.fa")
-# files.extend(all_genes_filepaths_in_vcf_ref)
-
-# gene mappings
-gene_mapping_files = []
+# pandora vcf mappings
+pandora_vcf_mapping_files = []
 for index, row in assemblies_and_refs.iterrows():
     id = row["id"]
-    for gene in all_genes_in_vcf_ref:
-        gene_mapping_files.append(f"{output_folder}/map_gene_from_vcf_ref_to_truth_or_ref/{gene}~~~{id}.bowtie.sam")
-files.extend(gene_mapping_files)
+    pandora_vcf_mapping_files.append(f"{output_folder}/map_pandora_vcf_ref_to_truth_or_ref/{id}.bowtie.sam")
+files.extend(pandora_vcf_mapping_files)
 
 
-# genes in truth/ref
-genes_in_truth_or_ref = []
+# sequences of genes from pandora vcf from the truths/ref
+truth_or_ref_gene_sequences = []
 for index, row in assemblies_and_refs.iterrows():
     id = row["id"]
-    for gene in all_genes_in_vcf_ref:
-        genes_in_truth_or_ref.append(f"{output_folder}/genes_from_truth_or_ref/{gene}~~~{id}.csv")
-files.extend(genes_in_truth_or_ref)
+    truth_or_ref_gene_sequences.append(f"{output_folder}/genes_from_truth_or_ref/{id}.csv")
+files.extend(truth_or_ref_gene_sequences)
 
 
 # edit distance files
 edit_distances_files = []
-for gene in all_genes_in_vcf_ref:
-    for truth_index, row in truth_assemblies.iterrows():
-        truth_id = row["id"]
-        for ref_index, row in references.iterrows():
-            ref_id = row["id"]
-            edit_distances_files.append(f"{output_folder}/edit_distances/{gene}~~~{truth_id}~~~{ref_id}.edit_distance.csv")
+for truth_index, row in truth_assemblies.iterrows():
+    truth_id = row["id"]
+    for ref_index, row in references.iterrows():
+        ref_id = row["id"]
+        edit_distances_files.append(f"{output_folder}/edit_distances/{truth_id}~~~{ref_id}.edit_distance.csv")
 files.extend(edit_distances_files)
 all_edit_distance_files_concatenated = f"{output_folder}/edit_distances/all_edit_distances.csv"
 files.append(all_edit_distance_files_concatenated)
@@ -82,19 +71,32 @@ for truth_index, row in truth_assemblies.iterrows():
     for ref_index, row in references.iterrows():
         ref_id = row["id"]
         variant_distance_files.append(f"{output_folder}/get_variant_precision_score_distance_csv/{truth_id}~~~{ref_id}.get_variant_precision_score_distance.csv")
+        variant_distance_files.append(f"{output_folder}/get_variant_precision_score_distance_csv/{truth_id}~~~{ref_id}.get_variant_precision_score_distance.unmapped.csv")
+
+        for truth_1, truth_2 in [pair for pair in truth_pairs if truth_id in pair]:
+            variant_distance_files.append(f"{output_folder}/get_variant_recall_score_distance_csv/{truth_id}~~~{ref_id}/{truth_1}_and_{truth_2}.get_variant_recall_score_distance.csv")
+            variant_distance_files.append(f"{output_folder}/get_variant_recall_score_distance_csv/{truth_id}~~~{ref_id}/{truth_1}_and_{truth_2}.get_variant_recall_score_distance.unmapped.csv")
 files.extend(variant_distance_files)
 
 gene_truth_ref_precision_proportion_distance_files = []
+gene_truth_ref_recall_proportion_distance_files = []
 for truth_index, row in truth_assemblies.iterrows():
     truth_id = row["id"]
     for ref_index, row in references.iterrows():
         ref_id = row["id"]
         gene_truth_ref_precision_proportion_distance_files.append(f"{output_folder}/get_gene_truth_ref_precision_proportion_distance/{truth_id}~~~{ref_id}.gene_truth_ref_precision_proportion_distance.csv")
+        for truth_1, truth_2 in [pair for pair in truth_pairs if truth_id in pair]:
+            gene_truth_ref_recall_proportion_distance_files.append(f"{output_folder}/get_gene_truth_ref_recall_proportion_distance/{truth_id}~~~{ref_id}/{truth_1}_and_{truth_2}.gene_truth_ref_recall_proportion_distance.csv")
 files.extend(gene_truth_ref_precision_proportion_distance_files)
+files.extend(gene_truth_ref_recall_proportion_distance_files)
 files.append(f"{output_folder}/get_gene_truth_ref_precision_proportion_distance/all_gene_truth_ref_precision_proportion_distance.csv")
+files.append(f"{output_folder}/get_gene_truth_ref_recall_proportion_distance/all_gene_truth_ref_recall_proportion_distance.csv")
 
 
-files.append(f"{output_folder}/gene_distance.pdf")
+files.append(f"{output_folder}/gene_distance_precision.pdf")
+files.append(f"{output_folder}/gene_distance_precision.filtered.pdf")
+files.append(f"{output_folder}/gene_distance_recall.pdf")
+files.append(f"{output_folder}/gene_distance_recall.filtered.pdf")
 
 files = list(set(files))
 
