@@ -26,7 +26,10 @@ def get_variant_output_dict(edit_distance_df, variant_calls_df, truth_id, ref_id
 
     for index, row in variant_calls_df.iterrows():
         vcf_probe_header = row["query_probe_header"]
+
         precision_score = float(row["classification"])
+        assert 0.0 <= precision_score <= 1.0
+
         contig_vcf_probe_originates_from = GetVariantDistanceHelpersForPrecision.parse_field_from_header("CHROM",
                                                                                                          vcf_probe_header)
         pos_vcf_probe_originates_from = GetVariantDistanceHelpersForPrecision.parse_field_from_header("POS",
