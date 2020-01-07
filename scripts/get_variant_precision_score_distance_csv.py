@@ -50,7 +50,8 @@ def get_variant_output_dict(edit_distance_df, variant_calls_df, truth_id, ref_id
             output_dict_probes_do_no_map_to_any_gene["precision_score"].append(precision_score)
             output_dict_probes_do_no_map_to_any_gene["distance"].append(-1.0)
         except ProbeMapsToSeveralGenes:
-            assert False, f"Probe {vcf_probe_header} maps to several genes, which does not make sense (or it does: https://en.wikipedia.org/wiki/Overlapping_gene#Evolution)..."
+            pass  # just ignores if it maps to several genes... TODO: check this
+            # assert False, f"Probe {truth_probe_header} maps to several genes, which does not make sense (or it does: https://en.wikipedia.org/wiki/Overlapping_gene#Evolution)..."
 
     return output_dict, output_dict_probes_do_no_map_to_any_gene
 
