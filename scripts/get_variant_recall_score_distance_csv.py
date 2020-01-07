@@ -1,5 +1,5 @@
 import pandas as pd
-from GetVariantDistanceHelpers import GetVariantDistanceHelpersForRecall, ProbeDoesNotMapToAnyGene, ProbeMapsToSeveralGenes
+from GetVariantDistanceHelpers import GetVariantDistanceHelpersForRecall, ProbeDoesNotMapToAnyGene
 import logging
 log_level = "INFO"
 logging.basicConfig(
@@ -45,14 +45,18 @@ def get_variant_output_dict(edit_distance_df, variant_calls_df, truth_id, ref_id
                                                                                                       return_type=int)
 
         try:
-            gene_name, edit_distance = GetVariantDistanceHelpersForRecall.get_gene_name_and_edit_distance_of_gene_this_truth_probe_maps_to(
+            gene_names, edit_distances = GetVariantDistanceHelpersForRecall.get_gene_names_and_edit_distances_of_genes_this_truth_probe_maps_to(
                 edit_distance_df, contig_truth_probe_originates_from, pos_truth_probe_originates_from)
-            output_dict["gene"].append(gene_name)
-            output_dict["truth"].append(truth_id)
-            output_dict["ref"].append(ref_id)
-            output_dict["variant"].append(truth_probe_header)
-            output_dict["recall_score"].append(recall_score)
-            output_dict["distance"].append(edit_distance)
+
+            assert len(gene_names) == len(edit_distances)
+            size = len(gene_names)
+
+            output_dict["gene"].extend(gene_names)
+            output_dict["truth"].extend([truth_id] * size)
+            output_dict["ref"].extend([ref_id] * size)
+            output_dict["variant"].extend([truth_probe_header] * size)
+            output_dict["recall_score"].extend([recall_score] * size)
+            output_dict["distance"].extend(edit_distances)
         except ProbeDoesNotMapToAnyGene:
             output_dict_probes_do_no_map_to_any_gene["gene"].append(truth_probe_header)
             output_dict_probes_do_no_map_to_any_gene["truth"].append(truth_id)
@@ -60,9 +64,6 @@ def get_variant_output_dict(edit_distance_df, variant_calls_df, truth_id, ref_id
             output_dict_probes_do_no_map_to_any_gene["variant"].append(truth_probe_header)
             output_dict_probes_do_no_map_to_any_gene["recall_score"].append(recall_score)
             output_dict_probes_do_no_map_to_any_gene["distance"].append(-1.0)
-        except ProbeMapsToSeveralGenes:
-            pass # just ignores if it maps to several genes... TODO: check this
-            # assert False, f"Probe {truth_probe_header} maps to several genes, which does not make sense (or it does: https://en.wikipedia.org/wiki/Overlapping_gene#Evolution)..."
 
     return output_dict, output_dict_probes_do_no_map_to_any_gene
 

@@ -1,5 +1,5 @@
 from unittest import TestCase
-from scripts.GetVariantDistanceHelpers import GetVariantDistanceHelpers, GetVariantDistanceHelpersForPrecision, GetVariantDistanceHelpersForRecall, ProbeMapsToSeveralGenes, ProbeDoesNotMapToAnyGene
+from scripts.GetVariantDistanceHelpers import GetVariantDistanceHelpers, GetVariantDistanceHelpersForPrecision, GetVariantDistanceHelpersForRecall, ProbeDoesNotMapToAnyGene
 import pandas as pd
 
 
@@ -122,7 +122,7 @@ class TestGetVariantDistanceHelpersForPrecision(TestGetVariantDistanceHelpersBas
         pos_vcf_probe_originates_from = 10
 
         with self.assertRaises(ProbeDoesNotMapToAnyGene):
-            GetVariantDistanceHelpersForPrecision.get_gene_name_and_edit_distance_of_gene_this_vcf_probe_maps_to(
+            GetVariantDistanceHelpersForPrecision.get_gene_names_and_edit_distances_of_genes_this_vcf_probe_maps_to(
                 df, contig_vcf_probe_originates_from, pos_vcf_probe_originates_from)
 
 
@@ -138,7 +138,7 @@ class TestGetVariantDistanceHelpersForPrecision(TestGetVariantDistanceHelpersBas
         pos_vcf_probe_originates_from = 9
 
         with self.assertRaises(ProbeDoesNotMapToAnyGene):
-            GetVariantDistanceHelpersForPrecision.get_gene_name_and_edit_distance_of_gene_this_vcf_probe_maps_to(df, contig_vcf_probe_originates_from, pos_vcf_probe_originates_from)
+            GetVariantDistanceHelpersForPrecision.get_gene_names_and_edit_distances_of_genes_this_vcf_probe_maps_to(df, contig_vcf_probe_originates_from, pos_vcf_probe_originates_from)
 
 
     def test___get_edit_distance_of_gene_this_vcf_probe_maps_to___good_contig_and_pos_just_on_left_border(self):
@@ -147,16 +147,15 @@ class TestGetVariantDistanceHelpersForPrecision(TestGetVariantDistanceHelpersBas
             "start_ref_gene": [10],
             "stop_ref_gene": [20],
             "edit_distance": [200],
-            "gene_name_truth_gene": ["gene"],
-            "gene_name_ref_gene": ["gene"],
+            "gene_name": ["gene"]
         })
         contig_vcf_probe_originates_from = "contig"
         pos_vcf_probe_originates_from = 10
 
-        actual = GetVariantDistanceHelpersForPrecision.get_gene_name_and_edit_distance_of_gene_this_vcf_probe_maps_to(
+        actual = GetVariantDistanceHelpersForPrecision.get_gene_names_and_edit_distances_of_genes_this_vcf_probe_maps_to(
                 df, contig_vcf_probe_originates_from, pos_vcf_probe_originates_from)
 
-        self.assertEqual(("gene", 200), actual)
+        self.assertEqual((["gene"], [200]), actual)
 
     def test___get_edit_distance_of_gene_this_vcf_probe_maps_to___good_contig_and_pos_just_on_right_border(self):
         df = pd.DataFrame({
@@ -164,16 +163,15 @@ class TestGetVariantDistanceHelpersForPrecision(TestGetVariantDistanceHelpersBas
             "start_ref_gene": [10],
             "stop_ref_gene": [20],
             "edit_distance": [200],
-            "gene_name_truth_gene": ["gene"],
-            "gene_name_ref_gene": ["gene"],
+            "gene_name": ["gene"]
         })
         contig_vcf_probe_originates_from = "contig"
         pos_vcf_probe_originates_from = 19
 
-        actual = GetVariantDistanceHelpersForPrecision.get_gene_name_and_edit_distance_of_gene_this_vcf_probe_maps_to(
+        actual = GetVariantDistanceHelpersForPrecision.get_gene_names_and_edit_distances_of_genes_this_vcf_probe_maps_to(
                 df, contig_vcf_probe_originates_from, pos_vcf_probe_originates_from)
 
-        self.assertEqual(("gene", 200), actual)
+        self.assertEqual((["gene"], [200]), actual)
 
     def test___get_edit_distance_of_gene_this_vcf_probe_maps_to___good_contig_and_pos_just_after_right_border(self):
         edit_distance = 200
@@ -187,9 +185,9 @@ class TestGetVariantDistanceHelpersForPrecision(TestGetVariantDistanceHelpersBas
         pos_vcf_probe_originates_from = 20
 
         with self.assertRaises(ProbeDoesNotMapToAnyGene):
-            GetVariantDistanceHelpersForPrecision.get_gene_name_and_edit_distance_of_gene_this_vcf_probe_maps_to(df,
-                                                                                                                 contig_vcf_probe_originates_from,
-                                                                                                                 pos_vcf_probe_originates_from)
+            GetVariantDistanceHelpersForPrecision.get_gene_names_and_edit_distances_of_genes_this_vcf_probe_maps_to(df,
+                                                                                                                    contig_vcf_probe_originates_from,
+                                                                                                                    pos_vcf_probe_originates_from)
 
 
     def test___get_edit_distance_of_gene_this_vcf_probe_maps_to___two_contigs_with_same_positions___only_maps_to_one(self):
@@ -198,16 +196,15 @@ class TestGetVariantDistanceHelpersForPrecision(TestGetVariantDistanceHelpersBas
             "start_ref_gene": [10, 10],
             "stop_ref_gene": [20, 20],
             "edit_distance": [100, 185],
-            "gene_name_truth_gene": ["gene_2", "gene_1"],
-            "gene_name_ref_gene": ["gene_2", "gene_1"],
+            "gene_name": ["gene_2", "gene_1"]
         })
         contig_vcf_probe_originates_from = "contig_1"
         pos_vcf_probe_originates_from = 15
 
-        actual = GetVariantDistanceHelpersForPrecision.get_gene_name_and_edit_distance_of_gene_this_vcf_probe_maps_to(df,
-                                                                                                                      contig_vcf_probe_originates_from,
-                                                                                                                      pos_vcf_probe_originates_from)
-        self.assertEqual(("gene_1", 185), actual)
+        actual = GetVariantDistanceHelpersForPrecision.get_gene_names_and_edit_distances_of_genes_this_vcf_probe_maps_to(df,
+                                                                                                                         contig_vcf_probe_originates_from,
+                                                                                                                 pos_vcf_probe_originates_from)
+        self.assertEqual((["gene_1"], [185]), actual)
 
 
 
@@ -222,9 +219,9 @@ class TestGetVariantDistanceHelpersForPrecision(TestGetVariantDistanceHelpersBas
         pos_vcf_probe_originates_from = 15
 
         with self.assertRaises(ProbeDoesNotMapToAnyGene):
-            GetVariantDistanceHelpersForPrecision.get_gene_name_and_edit_distance_of_gene_this_vcf_probe_maps_to(df,
-                                                                                                                 contig_vcf_probe_originates_from,
-                                                                                                                 pos_vcf_probe_originates_from)
+            GetVariantDistanceHelpersForPrecision.get_gene_names_and_edit_distances_of_genes_this_vcf_probe_maps_to(df,
+                                                                                                                    contig_vcf_probe_originates_from,
+                                                                                                                    pos_vcf_probe_originates_from)
 
 
     def test___get_edit_distance_of_gene_this_vcf_probe_maps_to___position_mapping_to_two_genes(self):
@@ -233,22 +230,26 @@ class TestGetVariantDistanceHelpersForPrecision(TestGetVariantDistanceHelpersBas
             "start_ref_gene": [10, 19],
             "stop_ref_gene": [20, 30],
             "edit_distance": [100, 185],
+            "gene_name": ["gene_2", "gene_1"]
         })
         contig_vcf_probe_originates_from = "contig"
         pos_vcf_probe_originates_from = 19
 
-        with self.assertRaises(ProbeMapsToSeveralGenes):
-            GetVariantDistanceHelpersForPrecision.get_gene_name_and_edit_distance_of_gene_this_vcf_probe_maps_to(df,
-                                                                                                                 contig_vcf_probe_originates_from,
-                                                                                                                 pos_vcf_probe_originates_from)
+        actual = GetVariantDistanceHelpersForPrecision.get_gene_names_and_edit_distances_of_genes_this_vcf_probe_maps_to(df,
+                                                                                                                    contig_vcf_probe_originates_from,
+                                                                                                                    pos_vcf_probe_originates_from)
+
+        self.assertEqual((["gene_2", "gene_1"], [100, 185]), actual)
+
+
+
 
 
 class TestGetVariantDistanceHelpersForRecall(TestGetVariantDistanceHelpersBaseClass):
     def test___get_edit_distance_of_gene_this_truth_probe_maps_to___only_maps_to_one(self):
         df = pd.DataFrame({
             "contig_truth_gene": ["contig_1", "contig_1"],
-            "gene_name_truth_gene": ["gene_1", "gene_2"],
-            "gene_name_ref_gene": ["gene_1", "gene_2"],
+            "gene_name": ["gene_1", "gene_2"],
             "edit_distance": [100, 185],
             "start_ref_gene": [10, 12],  # should not be used here
             "stop_ref_gene": [20, 30],  # should not be used here
@@ -258,6 +259,6 @@ class TestGetVariantDistanceHelpersForRecall(TestGetVariantDistanceHelpersBaseCl
         contig_truth_probe_originates_from = "contig_1"
         pos_truth_probe_originates_from = 15
 
-        actual = GetVariantDistanceHelpersForRecall.get_gene_name_and_edit_distance_of_gene_this_truth_probe_maps_to\
+        actual = GetVariantDistanceHelpersForRecall.get_gene_names_and_edit_distances_of_genes_this_truth_probe_maps_to\
             (df, contig_truth_probe_originates_from, pos_truth_probe_originates_from)
-        self.assertEqual(("gene_2", 185), actual)
+        self.assertEqual((["gene_2"], [185]), actual)

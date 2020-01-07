@@ -3,11 +3,8 @@ import sys
 sys.path.append(str(Path().absolute()))
 
 import re
-from scripts.utils import get_first_value_of_series
 
 class ProbeDoesNotMapToAnyGene(Exception):
-    pass
-class ProbeMapsToSeveralGenes(Exception):
     pass
 
 class GetVariantDistanceHelpers:
@@ -23,9 +20,9 @@ class GetVariantDistanceHelpers:
         return edit_distance_df
 
     @staticmethod
-    def get_gene_name_and_edit_distance_of_gene_this_probe_maps_to(edit_distance_df, contig_column, start_gene_column,
-                                                                       stop_gene_column, contig_probe_originates_from,
-                                                                       pos_probe_originates_from):
+    def get_gene_names_and_edit_distances_of_genes_this_probe_maps_to(edit_distance_df, contig_column, start_gene_column,
+                                                                      stop_gene_column, contig_probe_originates_from,
+                                                                      pos_probe_originates_from):
         # get all genes the vcf probe maps to
         df_where_probe_maps = edit_distance_df.query(f"{contig_column} == @contig_probe_originates_from and "
                                                      f"{start_gene_column} <= @pos_probe_originates_from and "
@@ -33,12 +30,10 @@ class GetVariantDistanceHelpers:
 
         if len(df_where_probe_maps) == 0:
             raise ProbeDoesNotMapToAnyGene()
-        elif len(df_where_probe_maps) == 1:
-            gene_name = get_first_value_of_series(df_where_probe_maps["gene_name"])
-            edit_distance = get_first_value_of_series(df_where_probe_maps["edit_distance"])
-            return gene_name, edit_distance
         else:
-            raise ProbeMapsToSeveralGenes()
+            gene_names = df_where_probe_maps["gene_name"].to_list()
+            edit_distances = df_where_probe_maps["edit_distance"].to_list()
+            return gene_names, edit_distances
 
 
     # NOTE: copied from https://github.com/iqbal-lab/pandora1_paper
@@ -57,9 +52,9 @@ class GetVariantDistanceHelpers:
 
 class GetVariantDistanceHelpersForPrecision(GetVariantDistanceHelpers):
     @staticmethod
-    def get_gene_name_and_edit_distance_of_gene_this_vcf_probe_maps_to(edit_distance_df, contig_vcf_probe_originates_from,
-                                                                       pos_vcf_probe_originates_from):
-        return GetVariantDistanceHelpers.get_gene_name_and_edit_distance_of_gene_this_probe_maps_to\
+    def get_gene_names_and_edit_distances_of_genes_this_vcf_probe_maps_to(edit_distance_df, contig_vcf_probe_originates_from,
+                                                                          pos_vcf_probe_originates_from):
+        return GetVariantDistanceHelpers.get_gene_names_and_edit_distances_of_genes_this_probe_maps_to\
             (edit_distance_df=edit_distance_df, contig_column="contig_ref_gene", start_gene_column="start_ref_gene",
              stop_gene_column="stop_ref_gene", contig_probe_originates_from=contig_vcf_probe_originates_from,
              pos_probe_originates_from=pos_vcf_probe_originates_from)
@@ -67,9 +62,9 @@ class GetVariantDistanceHelpersForPrecision(GetVariantDistanceHelpers):
 
 class GetVariantDistanceHelpersForRecall(GetVariantDistanceHelpers):
     @staticmethod
-    def get_gene_name_and_edit_distance_of_gene_this_truth_probe_maps_to(edit_distance_df, contig_truth_probe_originates_from,
-                                                                       pos_truth_probe_originates_from):
-        return GetVariantDistanceHelpers.get_gene_name_and_edit_distance_of_gene_this_probe_maps_to\
+    def get_gene_names_and_edit_distances_of_genes_this_truth_probe_maps_to(edit_distance_df, contig_truth_probe_originates_from,
+                                                                            pos_truth_probe_originates_from):
+        return GetVariantDistanceHelpers.get_gene_names_and_edit_distances_of_genes_this_probe_maps_to\
             (edit_distance_df=edit_distance_df, contig_column="contig_truth_gene", start_gene_column="start_truth_gene",
              stop_gene_column="stop_truth_gene", contig_probe_originates_from=contig_truth_probe_originates_from,
              pos_probe_originates_from=pos_truth_probe_originates_from)
