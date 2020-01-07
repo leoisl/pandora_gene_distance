@@ -94,7 +94,9 @@ files.append(f"{output_folder}/get_gene_truth_ref_recall_proportion_distance/all
 
 
 files.append(f"{output_folder}/gene_distance_precision.pdf")
+files.append(f"{output_folder}/gene_distance_precision.filtered.pdf")
 files.append(f"{output_folder}/gene_distance_recall.pdf")
+files.append(f"{output_folder}/gene_distance_recall.filtered.pdf")
 
 files = list(set(files))
 

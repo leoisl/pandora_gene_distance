@@ -83,7 +83,8 @@ rule concat_gene_truth_ref_precision_proportion_distance_files:
     input:
          gene_truth_ref_precision_proportion_distance_files = gene_truth_ref_precision_proportion_distance_files
     output:
-         gene_truth_ref_precision_proportion_distance_concatenated = f"{output_folder}/get_gene_truth_ref_precision_proportion_distance/all_gene_truth_ref_precision_proportion_distance.csv"
+         gene_truth_ref_precision_proportion_distance_concatenated = f"{output_folder}/get_gene_truth_ref_precision_proportion_distance/all_gene_truth_ref_precision_proportion_distance.csv",
+         gene_truth_ref_precision_proportion_distance_concatenated_filtered = f"{output_folder}/get_gene_truth_ref_precision_proportion_distance/all_gene_truth_ref_precision_proportion_distance.filtered.csv"
     threads: 1
     resources:
         mem_mb = lambda wildcards, attempt: 2000 * attempt
@@ -95,13 +96,17 @@ rule concat_gene_truth_ref_precision_proportion_distance_files:
         concatenated_df.columns = ["gene", "truth", "ref", "distance", "max_precision", "observed_precision", "precision_ratio"]
         concatenated_df.set_index(["gene", "truth", "ref"], inplace=True)
         concatenated_df.to_csv(output.gene_truth_ref_precision_proportion_distance_concatenated)
+        concatenated_df = concatenated_df.query("max_precision >= 5")
+        concatenated_df.to_csv(output.gene_truth_ref_precision_proportion_distance_concatenated_filtered)
+
 
 
 rule concat_gene_truth_ref_recall_proportion_distance_files:
     input:
          gene_truth_ref_recall_proportion_distance_files = gene_truth_ref_recall_proportion_distance_files
     output:
-         gene_truth_ref_recall_proportion_distance_concatenated = f"{output_folder}/get_gene_truth_ref_recall_proportion_distance/all_gene_truth_ref_recall_proportion_distance.csv"
+         gene_truth_ref_recall_proportion_distance_concatenated = f"{output_folder}/get_gene_truth_ref_recall_proportion_distance/all_gene_truth_ref_recall_proportion_distance.csv",
+         gene_truth_ref_recall_proportion_distance_concatenated_filtered = f"{output_folder}/get_gene_truth_ref_recall_proportion_distance/all_gene_truth_ref_recall_proportion_distance.filtered.csv"
     threads: 1
     resources:
         mem_mb = lambda wildcards, attempt: 2000 * attempt
@@ -113,3 +118,5 @@ rule concat_gene_truth_ref_recall_proportion_distance_files:
         concatenated_df.columns = ["gene", "truth", "ref", "distance", "max_recall", "observed_recall", "recall_ratio"]
         concatenated_df.set_index(["gene", "truth", "ref"], inplace=True)
         concatenated_df.to_csv(output.gene_truth_ref_recall_proportion_distance_concatenated)
+        concatenated_df = concatenated_df.query("max_recall >= 5")
+        concatenated_df.to_csv(output.gene_truth_ref_recall_proportion_distance_concatenated_filtered)

@@ -13,6 +13,7 @@ snakemake = "*"
 scikit-allel = "*"
 editdistance = "*"
 dash = "*"
+biopython = "*"
 
 [dev-packages]
 pytest = "*"
