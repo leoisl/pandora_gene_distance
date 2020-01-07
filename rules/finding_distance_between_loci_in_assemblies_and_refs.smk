@@ -11,7 +11,7 @@ rule get_truth_or_ref_gene_sequences:
          truth_or_ref_gene_sequences = f"{output_folder}/genes_from_truth_or_ref/{{id}}.csv"
     threads: 1
     resources:
-        mem_mb = lambda wildcards, attempt: 1000 * attempt
+        mem_mb = lambda wildcards, attempt: 8000 * 2**(attempt-1)
     log:
         "logs/get_truth_or_ref_gene_sequences/{id}.log"
     script:
@@ -42,7 +42,7 @@ rule get_edit_distance_between_genes_of_truth_assemblies_and_ref:
          edit_distance_between_genes_of_truth_assemblies_and_ref = f"{output_folder}/edit_distances/{{truth_id}}~~~{{ref_id}}.edit_distance.csv"
     threads: 1
     resources:
-        mem_mb = lambda wildcards, attempt: 2000 * attempt
+        mem_mb = lambda wildcards, attempt: 8000 * 2**(attempt-1)
     log:
         "logs/get_edit_distance_between_genes_of_truth_assemblies_and_ref/{{truth_id}}~~~{{ref_id}}.edit_distance.log"
     run:
@@ -63,7 +63,7 @@ rule concatenate_edit_distance_files:
          all_edit_distance_files_concatenated = f"{output_folder}/edit_distances/all_edit_distances.csv"
     threads: 1
     resources:
-        mem_mb = lambda wildcards, attempt: 2000 * attempt
+        mem_mb = lambda wildcards, attempt: 8000 * 2**(attempt-1)
     log:
         "logs/concatenate_edit_distance_files/all_edit_distances.log"
     run:

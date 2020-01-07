@@ -9,7 +9,7 @@ rule get_variant_precision_score_distance_csv:
          variant_precision_score_distance_unmapped_probes_file = f"{output_folder}/get_variant_precision_score_distance_csv/{{truth_id}}~~~{{ref_id}}.get_variant_precision_score_distance.unmapped.csv",
     threads: 1
     resources:
-        mem_mb = lambda wildcards, attempt: 2000 * attempt
+        mem_mb = lambda wildcards, attempt: 8000 * 2**(attempt-1)
     log:
         "logs/get_variant_precision_score_distance_csv/{truth_id}~~~{ref_id}.get_variant_precision_score_distance.log"
     script:
@@ -25,7 +25,7 @@ rule get_variant_recall_score_distance_csv:
          variant_recall_score_distance_unmapped_probes_file = f"{output_folder}/get_variant_recall_score_distance_csv/{{truth_id}}~~~{{ref_id}}/{{sample_pair}}.get_variant_recall_score_distance.unmapped.csv",
     threads: 1
     resources:
-        mem_mb = lambda wildcards, attempt: 2000 * attempt
+        mem_mb = lambda wildcards, attempt: 8000 * 2**(attempt-1)
     log:
         "logs/get_variant_recall_score_distance_csv/{truth_id}~~~{ref_id}~~~{sample_pair}.get_variant_recall_score_distance.log"
     script:
@@ -39,7 +39,7 @@ rule get_gene_truth_ref_precision_proportion_distance:
          gene_truth_ref_precision_proportion_distance_file = f"{output_folder}/get_gene_truth_ref_precision_proportion_distance/{{truth_id}}~~~{{ref_id}}.gene_truth_ref_precision_proportion_distance.csv"
     threads: 1
     resources:
-        mem_mb = lambda wildcards, attempt: 2000 * attempt
+        mem_mb = lambda wildcards, attempt: 8000 * 2**(attempt-1)
     log:
         "logs/get_gene_truth_ref_precision_proportion_distance/{truth_id}~~~{ref_id}.get_gene_truth_ref_precision_proportion_distance.log"
     run:
@@ -63,7 +63,7 @@ rule get_gene_truth_ref_recall_proportion_distance:
          gene_truth_ref_recall_proportion_distance_file = f"{output_folder}/get_gene_truth_ref_recall_proportion_distance/{{truth_id}}~~~{{ref_id}}/{{sample_pair}}.gene_truth_ref_recall_proportion_distance.csv"
     threads: 1
     resources:
-        mem_mb = lambda wildcards, attempt: 2000 * attempt
+        mem_mb = lambda wildcards, attempt: 8000 * 2**(attempt-1)
     log:
         "logs/get_gene_truth_ref_recall_proportion_distance/{truth_id}~~~{ref_id}~~~{sample_pair}.get_gene_truth_ref_recall_proportion_distance.log"
     run:
@@ -87,7 +87,7 @@ rule concat_gene_truth_ref_precision_proportion_distance_files:
          gene_truth_ref_precision_proportion_distance_concatenated_filtered = f"{output_folder}/get_gene_truth_ref_precision_proportion_distance/all_gene_truth_ref_precision_proportion_distance.filtered.csv"
     threads: 1
     resources:
-        mem_mb = lambda wildcards, attempt: 2000 * attempt
+        mem_mb = lambda wildcards, attempt: 8000 * 2**(attempt-1)
     log:
         "logs/concat_gene_truth_ref_precision_proportion_distance_files/all_gene_truth_ref_precision_proportion_distance.log"
     run:
@@ -109,7 +109,7 @@ rule concat_gene_truth_ref_recall_proportion_distance_files:
          gene_truth_ref_recall_proportion_distance_concatenated_filtered = f"{output_folder}/get_gene_truth_ref_recall_proportion_distance/all_gene_truth_ref_recall_proportion_distance.filtered.csv"
     threads: 1
     resources:
-        mem_mb = lambda wildcards, attempt: 2000 * attempt
+        mem_mb = lambda wildcards, attempt: 8000 * 2**(attempt-1)
     log:
         "logs/concat_gene_truth_ref_recall_proportion_distance_files/all_gene_truth_ref_recall_proportion_distance.log"
     run:

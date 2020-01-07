@@ -10,7 +10,7 @@ rule plot_gene_distance_plot_for_precision:
          gene_distance_plot_filtered = f"{output_folder}/gene_distance_precision.filtered.pdf"
     threads: 1
     resources:
-        mem_mb = lambda wildcards, attempt: 2000 * attempt
+        mem_mb = lambda wildcards, attempt: 8000 * 2**(attempt-1)
     log:
         "logs/plot_gene_distance_plot_for_precision.log"
     run:
@@ -35,7 +35,7 @@ rule plot_gene_distance_plot_for_recall:
          gene_distance_plot_filtered = f"{output_folder}/gene_distance_recall.filtered.pdf"
     threads: 1
     resources:
-        mem_mb = lambda wildcards, attempt: 2000 * attempt
+        mem_mb = lambda wildcards, attempt: 8000 * 2**(attempt-1)
     log:
         "logs/plot_gene_distance_plot_for_recall.log"
     run:
