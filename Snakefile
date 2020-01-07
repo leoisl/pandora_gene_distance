@@ -93,10 +93,10 @@ files.append(f"{output_folder}/get_gene_truth_ref_precision_proportion_distance/
 files.append(f"{output_folder}/get_gene_truth_ref_recall_proportion_distance/all_gene_truth_ref_recall_proportion_distance.csv")
 
 
-files.append(f"{output_folder}/gene_distance_precision.pdf")
-files.append(f"{output_folder}/gene_distance_precision.filtered.pdf")
-files.append(f"{output_folder}/gene_distance_recall.pdf")
-files.append(f"{output_folder}/gene_distance_recall.filtered.pdf")
+files.append(f"{output_folder}/gene_distance_precision.png")
+files.append(f"{output_folder}/gene_distance_precision.filtered.png")
+files.append(f"{output_folder}/gene_distance_recall.png")
+files.append(f"{output_folder}/gene_distance_recall.filtered.png")
 
 files = list(set(files))
 
