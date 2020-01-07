@@ -1,7 +1,6 @@
-import pysam
 import editdistance
 import pandas as pd
-
+from Bio.Seq import Seq
 
 rule get_truth_or_ref_gene_sequences:
     input:
@@ -15,63 +14,21 @@ rule get_truth_or_ref_gene_sequences:
         mem_mb = lambda wildcards, attempt: 1000 * attempt
     log:
         "logs/get_truth_or_ref_gene_sequences/{id}.log"
-    run:
-        gene_seq_infos = {
-            "status": [],
-            "gene_name": [],
-            "ref_or_truth_id": [],
-            "contig": [],
-            "start": [],
-            "stop": [],
-            "sequence": []
-        }
-
-        mapped_genes = set()
-        with pysam.AlignmentFile(input.pandora_vcf_ref_mapped_to_truth_or_ref_sam_file) as pandora_vcf_ref_mapped_to_truth_or_ref_sam_file, \
-             pysam.FastaFile(filename = input.truth_or_ref, filepath_index=input.truth_or_ref_index) as truth_or_ref:
-            ref_or_truth_id = wildcards.id
-            for sam_record in pandora_vcf_ref_mapped_to_truth_or_ref_sam_file:
-                if not sam_record.is_unmapped:
-                    gene_seq_infos["status"].append("Mapped")
-
-                    gene_name = sam_record.query_name
-                    assert gene_name not in mapped_genes, f"Gene {gene_name} has 2+ mappings in {input.pandora_vcf_ref_mapped_to_truth_or_ref_sam_file}, this should not have happened"
-                    mapped_genes.add(gene_name)
-                    gene_seq_infos["gene_name"].append(gene_name)
-
-                    gene_seq_infos["ref_or_truth_id"].append(ref_or_truth_id)
-
-                    contig = sam_record.reference_name
-                    gene_seq_infos["contig"].append(contig)
-
-                    start = int(sam_record.reference_start)
-                    gene_seq_infos["start"].append(start)
-
-                    stop = int(sam_record.reference_end)
-                    gene_seq_infos["stop"].append(stop)
-
-                    truth_or_ref_contig_sequence = truth_or_ref.fetch(reference = contig)
-                    sequence = truth_or_ref_contig_sequence[start:stop].upper()
-                    gene_seq_infos["sequence"].append(sequence)
-                else:
-                    gene_seq_infos["status"].append("Unmapped")
-                    gene_seq_infos["gene_name"].append(sam_record.query_name)
-                    gene_seq_infos["ref_or_truth_id"].append(ref_or_truth_id)
-                    gene_seq_infos["contig"].append("")
-                    gene_seq_infos["start"].append(-1)
-                    gene_seq_infos["stop"].append(-1)
-                    gene_seq_infos["sequence"].append("")
-
-        df = pd.DataFrame(gene_seq_infos)
-        df.to_csv(output.truth_or_ref_gene_sequences, index=False)
+    script:
+        "../scripts/get_truth_or_ref_gene_sequences.py"
 
 
-
+def reverse_complement(sequence):
+    biopython_seq = Seq(sequence)
+    return str(biopython_seq.reverse_complement())
 def get_edit_distance(row):
     if row["status_truth_gene"] == "Mapped" and row["status_ref_gene"] == "Mapped":
             truth_gene_seq = row["sequence_truth_gene"]
             ref_gene_seq = row["sequence_ref_gene"]
-            edit_distance = editdistance.eval(truth_gene_seq, ref_gene_seq) / max(len(truth_gene_seq), len(ref_gene_seq))
+            truth_gene_seq_rc = reverse_complement(truth_gene_seq)
+            edit_distance_fw = editdistance.eval(truth_gene_seq, ref_gene_seq) / max(len(truth_gene_seq), len(ref_gene_seq))
+            edit_distance_rc = editdistance.eval(truth_gene_seq_rc, ref_gene_seq) / max(len(truth_gene_seq_rc), len(ref_gene_seq))
+            edit_distance = min(edit_distance_fw, edit_distance_rc)
             assert 0 <= edit_distance <= 1
     else:
         edit_distance = -1
