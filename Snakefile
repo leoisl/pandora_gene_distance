@@ -94,9 +94,10 @@ files.append(f"{output_folder}/get_gene_truth_ref_recall_proportion_distance/all
 
 
 files.append(f"{output_folder}/gene_distance_precision.png")
-files.append(f"{output_folder}/gene_distance_precision.filtered.png")
-files.append(f"{output_folder}/gene_distance_recall.png")
-files.append(f"{output_folder}/gene_distance_recall.filtered.png")
+files.append(f"{output_folder}/gene_distance_recall.lineplot.0.001_bins.png")
+files.append(f"{output_folder}/gene_distance_recall.lineplot.0.01_bins.png")
+files.append(f"{output_folder}/gene_distance_recall.violinplot.0.01_bins.area.png")
+files.append(f"{output_folder}/gene_distance_recall.violinplot.0.01_bins.count.png")
 
 files = list(set(files))
 
