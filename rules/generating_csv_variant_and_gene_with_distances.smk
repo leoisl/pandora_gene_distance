@@ -3,7 +3,7 @@ import pandas as pd
 rule get_variant_precision_score_distance_csv:
     input:
          edit_distance_csv = rules.concatenate_edit_distance_files.output.all_edit_distance_files_concatenated,
-         variants_calls = lambda wildcards: f"{precision_reports}/{wildcards.truth_id}/all/snippy_{wildcards.ref_id}/coverage_filter_0/strand_bias_filter_Not_App/gaps_filter_Not_App/variant_calls_probeset_report.tsv"
+         variants_calls = lambda wildcards: f"{precision_reports}/{wildcards.truth_id}/{coverage}/{tool}_{wildcards.ref_id}/coverage_filter_{coverage_filter}/strand_bias_filter_{strand_bias_filter}/gaps_filter_{gaps_filter}/variant_calls_probeset_report.tsv",
     output:
          variant_precision_score_distance_file = f"{output_folder}/get_variant_precision_score_distance_csv/{{truth_id}}~~~{{ref_id}}.get_variant_precision_score_distance.csv",
          variant_precision_score_distance_unmapped_probes_file = f"{output_folder}/get_variant_precision_score_distance_csv/{{truth_id}}~~~{{ref_id}}.get_variant_precision_score_distance.unmapped.csv",
@@ -19,7 +19,7 @@ rule get_variant_precision_score_distance_csv:
 rule get_variant_recall_score_distance_csv:
     input:
          edit_distance_csv = rules.concatenate_edit_distance_files.output.all_edit_distance_files_concatenated,
-         variants_calls = lambda wildcards: f"{recall_reports}/{wildcards.truth_id}/all/snippy_{wildcards.ref_id}/coverage_filter_0/strand_bias_filter_Not_App/gaps_filter_Not_App/{wildcards.sample_pair}.report.tsv"
+         variants_calls = lambda wildcards: f"{recall_reports}/{wildcards.truth_id}/{coverage}/{tool}_{wildcards.ref_id}/coverage_filter_{coverage_filter}/strand_bias_filter_{strand_bias_filter}/gaps_filter_{gaps_filter}/{wildcards.sample_pair}.report.tsv",
     output:
          variant_recall_score_distance_file = f"{output_folder}/get_variant_recall_score_distance_csv/{{truth_id}}~~~{{ref_id}}/{{sample_pair}}.get_variant_recall_score_distance.csv",
          variant_recall_score_distance_unmapped_probes_file = f"{output_folder}/get_variant_recall_score_distance_csv/{{truth_id}}~~~{{ref_id}}/{{sample_pair}}.get_variant_recall_score_distance.unmapped.csv",
