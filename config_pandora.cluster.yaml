@@ -1,0 +1,13 @@
+output_folder:              evaluating_calls_output_pandora_no_denovo_100x
+
+pandora_vcf_ref:            /hps/nobackup/research/zi/projects/pandora_paper_leandro/analysis_random_subsampling/100x/random/compare_no_denovo/pandora_multisample.vcf_ref.fa
+truth_assemblies:           metadata_cluster/truth_assemblies.csv
+references:                 metadata_cluster/references_pandora.csv
+
+pandora_eval_config:
+  output_folder:              /hps/nobackup/research/zi/leandro/pandora1_paper/analysis_output_pandora_no_filters_snippy_all_precision_flank_150_recall_flank_25_truth_probes_flank_21
+  tool:                       pandora_nanopore_no_denovo
+  coverage:                   100x
+  coverage_filter:            0
+  strand_bias_filter:         0.0
+  gaps_filter:                1.0
