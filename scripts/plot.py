@@ -53,7 +53,6 @@ def plot_violinplot_recall_in_genes_in_several_bins(df, step, scale, output_file
     sns.violinplot(x="edit_distance_labels", y="recall_ratio", data=df, scale=scale)
     ax.set(xlabel=f"Edit distance (gene bins at each {step*100}%)", ylabel='Recall ratio per bin')
     ax.set_ylim([-0.25, 1.25])
-    ax.set_xlim([0.0, 0.2])
     save_figure(fig, output_filepath)
 
 def plot_scatterplot_for_precision(gene_truth_ref_measure_and_distance, output_filepath):
