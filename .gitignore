@@ -20,3 +20,7 @@ notebooks/genes_in_all_sample\.fa
 old_evaluating_snippy_calls_output/
 
 tmp/
+
+evaluating_calls_output_pandora_no_denovo_100x/
+
+evaluating_calls_output_snippy/

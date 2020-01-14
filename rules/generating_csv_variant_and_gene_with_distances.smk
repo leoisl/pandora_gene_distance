@@ -1,9 +1,23 @@
 import pandas as pd
 
+rule generate_variant_calls_for_precision_folder_if_it_does_not_exist:
+    input:
+        original_variant_calls = lambda wildcards: f"{precision_reports}/{wildcards.truth_id}/{coverage}/{tool}/coverage_filter_{coverage_filter}/strand_bias_filter_{strand_bias_filter}/gaps_filter_{gaps_filter}/variant_calls_probeset_report.tsv"
+    output:
+        variants_calls =  f"{precision_reports}/{{truth_id}}/{coverage}/{tool}_{{ref_id}}/coverage_filter_{coverage_filter}/strand_bias_filter_{strand_bias_filter}/gaps_filter_{gaps_filter}/variant_calls_probeset_report.tsv"
+    threads: 1
+    resources:
+        mem_mb = lambda wildcards, attempt: 2000 * 2**(attempt-1)
+    log:
+        "logs/generate_variant_calls_for_precision_folder_if_it_does_not_exist/{truth_id}~~~{ref_id}.generate_variant_calls_for_precision_folder_if_it_does_not_exist.log"
+    shell:
+        "ln -s `realpath {input.original_variant_calls}` {output.variants_calls}"
+
+
 rule get_variant_precision_score_distance_csv:
     input:
          edit_distance_csv = rules.concatenate_edit_distance_files.output.all_edit_distance_files_concatenated,
-         variants_calls = lambda wildcards: f"{precision_reports}/{wildcards.truth_id}/all/snippy_{wildcards.ref_id}/coverage_filter_0/strand_bias_filter_Not_App/gaps_filter_Not_App/variant_calls_probeset_report.tsv"
+         variants_calls = rules.generate_variant_calls_for_precision_folder_if_it_does_not_exist.output.variants_calls,
     output:
          variant_precision_score_distance_file = f"{output_folder}/get_variant_precision_score_distance_csv/{{truth_id}}~~~{{ref_id}}.get_variant_precision_score_distance.csv",
          variant_precision_score_distance_unmapped_probes_file = f"{output_folder}/get_variant_precision_score_distance_csv/{{truth_id}}~~~{{ref_id}}.get_variant_precision_score_distance.unmapped.csv",
@@ -16,10 +30,25 @@ rule get_variant_precision_score_distance_csv:
         "../scripts/get_variant_precision_score_distance_csv.py"
 
 
+rule generate_truth_calls_folder_if_it_does_not_exist:
+    input:
+        original_variant_calls = lambda wildcards: f"{recall_reports}/{wildcards.truth_id}/{coverage}/{tool}/coverage_filter_{coverage_filter}/strand_bias_filter_{strand_bias_filter}/gaps_filter_{gaps_filter}/{wildcards.sample_pair}.report.tsv",
+    output:
+        variants_calls =  f"{recall_reports}/{{truth_id}}/{coverage}/{tool}_{{ref_id}}/coverage_filter_{coverage_filter}/strand_bias_filter_{strand_bias_filter}/gaps_filter_{gaps_filter}/{{sample_pair}}.report.tsv"
+    threads: 1
+    resources:
+        mem_mb = lambda wildcards, attempt: 2000 * 2**(attempt-1)
+    log:
+        "logs/generate_truth_calls_folder_if_it_does_not_exist/{truth_id}~~~{ref_id}~~~{sample_pair}.generate_truth_calls_folder_if_it_does_not_exist.log"
+    shell:
+        "ln -s `realpath {input.original_variant_calls}` {output.variants_calls}"
+
+
+
 rule get_variant_recall_score_distance_csv:
     input:
          edit_distance_csv = rules.concatenate_edit_distance_files.output.all_edit_distance_files_concatenated,
-         variants_calls = lambda wildcards: f"{recall_reports}/{wildcards.truth_id}/all/snippy_{wildcards.ref_id}/coverage_filter_0/strand_bias_filter_Not_App/gaps_filter_Not_App/{wildcards.sample_pair}.report.tsv"
+         variants_calls = rules.generate_truth_calls_folder_if_it_does_not_exist.output.variants_calls
     output:
          variant_recall_score_distance_file = f"{output_folder}/get_variant_recall_score_distance_csv/{{truth_id}}~~~{{ref_id}}/{{sample_pair}}.get_variant_recall_score_distance.csv",
          variant_recall_score_distance_unmapped_probes_file = f"{output_folder}/get_variant_recall_score_distance_csv/{{truth_id}}~~~{{ref_id}}/{{sample_pair}}.get_variant_recall_score_distance.unmapped.csv",

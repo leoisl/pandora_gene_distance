@@ -1,7 +1,6 @@
 from pathlib import Path
 from snakemake.utils import min_version
 import pandas as pd
-import pysam
 import itertools
 
 min_version("5.1.0")
@@ -19,8 +18,13 @@ pandora_vcf_ref = config['pandora_vcf_ref']
 truth_assemblies = pd.read_csv(config["truth_assemblies"])
 references = pd.read_csv(config["references"])
 assemblies_and_refs = pd.concat([truth_assemblies, references], ignore_index=True)
-precision_reports = f"{config['pandora_eval_output_folder']}/precision/reports_from_probe_mappings"
-recall_reports = f"{config['pandora_eval_output_folder']}/recall/reports"
+precision_reports = f"{config['pandora_eval_config']['output_folder']}/precision/reports_from_probe_mappings"
+recall_reports = f"{config['pandora_eval_config']['output_folder']}/recall/reports"
+tool = config['pandora_eval_config']['tool']
+coverage = config['pandora_eval_config']['coverage']
+coverage_filter = config['pandora_eval_config']['coverage_filter']
+strand_bias_filter = config['pandora_eval_config']['strand_bias_filter']
+gaps_filter = config['pandora_eval_config']['gaps_filter']
 truth_pairs = [(truth_1, truth_2) for truth_1, truth_2 in itertools.combinations(sorted(truth_assemblies["id"]), r=2)]
 
 

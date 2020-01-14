@@ -42,6 +42,8 @@ def plot_lineplot_mean_recall_and_count_in_genes_in_several_bins(df, step, outpu
     sns.lineplot(x="edit_distance_labels", y="gene", data=count_df, ax=ax2, color='r')
 
     ax.set(xlabel=f"Edit distance (gene bins at each {step * 100}%)", ylabel='Mean recall score per bin')
+    ax.set_ylim([0.0, 1.0])
+    ax.set_xlim([0.0, 0.2])
     ax2.set(ylabel='Number of genes per bin')
 
     save_figure(fig, output_filepath)
@@ -50,6 +52,7 @@ def plot_violinplot_recall_in_genes_in_several_bins(df, step, scale, output_file
     fig, ax = init_plot()
     sns.violinplot(x="edit_distance_labels", y="recall_ratio", data=df, scale=scale)
     ax.set(xlabel=f"Edit distance (gene bins at each {step*100}%)", ylabel='Recall ratio per bin')
+    ax.set_ylim([-0.25, 1.25])
     save_figure(fig, output_filepath)
 
 def plot_scatterplot_for_precision(gene_truth_ref_measure_and_distance, output_filepath):
