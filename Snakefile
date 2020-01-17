@@ -97,11 +97,11 @@ files.append(f"{output_folder}/get_gene_truth_ref_precision_proportion_distance/
 files.append(f"{output_folder}/get_gene_truth_ref_recall_proportion_distance/all_gene_truth_ref_recall_proportion_distance.csv")
 
 
-files.append(f"{output_folder}/gene_distance_precision.png")
-files.append(f"{output_folder}/gene_distance_recall.lineplot.0.001_bins.png")
-files.append(f"{output_folder}/gene_distance_recall.lineplot.0.01_bins.png")
-files.append(f"{output_folder}/gene_distance_recall.violinplot.0.01_bins.area.png")
-files.append(f"{output_folder}/gene_distance_recall.violinplot.0.01_bins.count.png")
+for recall_and_precision in ["recall", "precision"]:
+    files.append(f"{output_folder}/gene_distance_{recall_and_precision}.lineplot.0.001_bins.png")
+    files.append(f"{output_folder}/gene_distance_{recall_and_precision}.lineplot.0.01_bins.png")
+    files.append(f"{output_folder}/gene_distance_{recall_and_precision}.violinplot.0.01_bins.area.png")
+    files.append(f"{output_folder}/gene_distance_{recall_and_precision}.violinplot.0.01_bins.count.png")
 
 files = list(set(files))
 
