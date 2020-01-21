@@ -16,7 +16,7 @@ rule plot_gene_distance_plot_for_precision:
     log:
         "logs/plot_gene_distance_plot_for_precision.log"
     run:
-        df = pd.read_csv(input.gene_truth_ref_precision_proportion_distance_concatenated)
+        df = pd.read_csv(input.gene_truth_ref_precision_proportion_distance_concatenated, dtype=object)
         df_with_step_0001 = get_df_with_edit_distance_labels_for_precision(df, step = 0.001, max_bin = 0.2)
         df_with_step_001 = get_df_with_edit_distance_labels_for_precision(df, step = 0.01, max_bin = 0.2)
 
@@ -45,7 +45,7 @@ rule plot_gene_distance_plot_for_recall:
     log:
         "logs/plot_gene_distance_plot_for_recall.log"
     run:
-        df = pd.read_csv(input.gene_truth_ref_recall_proportion_distance_concatenated)
+        df = pd.read_csv(input.gene_truth_ref_recall_proportion_distance_concatenated, dtype=object)
         df_with_step_0001 = get_df_with_edit_distance_labels_for_recall(df, step = 0.001, max_bin = 0.2)
         df_with_step_001 = get_df_with_edit_distance_labels_for_recall(df, step = 0.01, max_bin = 0.2)
 

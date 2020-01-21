@@ -76,9 +76,9 @@ variant_recall_score_distance_file = snakemake.output.variant_recall_score_dista
 variant_recall_score_distance_unmapped_probes_file = snakemake.output.variant_recall_score_distance_unmapped_probes_file
 
 # API usage
-edit_distance_df = pd.read_csv(edit_distance_csv)
+edit_distance_df = pd.read_csv(edit_distance_csv, dtype=object)
 edit_distance_df = GetVariantDistanceHelpersForRecall.get_edit_distance_df_given_truth_and_ref(edit_distance_df, truth_id, ref_id)
-variant_calls_df = pd.read_csv(variant_calls, sep="\t")
+variant_calls_df = pd.read_csv(variant_calls, sep="\t", dtype=object)
 
 output_dict, output_dict_probes_do_no_map_to_any_gene = get_variant_output_dict(edit_distance_df, variant_calls_df, truth_id, ref_id)
 

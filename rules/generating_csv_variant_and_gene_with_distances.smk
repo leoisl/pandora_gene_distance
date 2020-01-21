@@ -72,7 +72,7 @@ rule get_gene_truth_ref_precision_proportion_distance:
     log:
         "logs/get_gene_truth_ref_precision_proportion_distance/{truth_id}~~~{ref_id}.get_gene_truth_ref_precision_proportion_distance.log"
     run:
-        variant_precision_score_distance_csv = pd.read_csv(input.variant_precision_score_distance_csv)
+        variant_precision_score_distance_csv = pd.read_csv(input.variant_precision_score_distance_csv, dtype=object)
         del variant_precision_score_distance_csv['variant']
         gene_truth_ref_precision_proportion_distance = variant_precision_score_distance_csv.groupby(["gene", "truth", "ref", "distance"])\
             .agg({
@@ -96,7 +96,7 @@ rule get_gene_truth_ref_recall_proportion_distance:
     log:
         "logs/get_gene_truth_ref_recall_proportion_distance/{truth_id}~~~{ref_id}~~~{sample_pair}.get_gene_truth_ref_recall_proportion_distance.log"
     run:
-        variant_recall_score_distance_csv = pd.read_csv(input.variant_recall_score_distance_csv)
+        variant_recall_score_distance_csv = pd.read_csv(input.variant_recall_score_distance_csv, dtype=object)
         del variant_recall_score_distance_csv['variant']
         gene_truth_ref_recall_proportion_distance = variant_recall_score_distance_csv.groupby(["gene", "truth", "ref", "distance"])\
             .agg({
@@ -119,7 +119,7 @@ rule concat_gene_truth_ref_precision_proportion_distance_files:
     log:
         "logs/concat_gene_truth_ref_precision_proportion_distance_files/all_gene_truth_ref_precision_proportion_distance.log"
     run:
-        dfs = [pd.read_csv(file, header=[0,1,2]) for file in input.gene_truth_ref_precision_proportion_distance_files]
+        dfs = [pd.read_csv(file, header=[0,1,2], dtype=object) for file in input.gene_truth_ref_precision_proportion_distance_files]
         concatenated_df = pd.concat(dfs)
         concatenated_df.columns = ["gene", "truth", "ref", "distance", "max_precision", "observed_precision", "precision_ratio"]
         concatenated_df.set_index(["gene", "truth", "ref"], inplace=True)
@@ -138,7 +138,7 @@ rule concat_gene_truth_ref_recall_proportion_distance_files:
     log:
         "logs/concat_gene_truth_ref_recall_proportion_distance_files/all_gene_truth_ref_recall_proportion_distance.log"
     run:
-        dfs = [pd.read_csv(file, header=[0,1,2]) for file in input.gene_truth_ref_recall_proportion_distance_files]
+        dfs = [pd.read_csv(file, header=[0,1,2], dtype=object) for file in input.gene_truth_ref_recall_proportion_distance_files]
         concatenated_df = pd.concat(dfs)
         concatenated_df.columns = ["gene", "truth", "ref", "distance", "max_recall", "observed_recall", "recall_ratio"]
         concatenated_df.set_index(["gene", "truth", "ref"], inplace=True)
