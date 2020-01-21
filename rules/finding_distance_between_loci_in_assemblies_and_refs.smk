@@ -1,6 +1,7 @@
 import editdistance
 import pandas as pd
 from scripts.utils import reverse_complement
+from scripts.dtypes import mapped_genes_dtype_dict
 
 rule get_truth_or_ref_gene_sequences:
     input:
@@ -43,8 +44,8 @@ rule get_edit_distance_between_genes_of_truth_assemblies_and_ref:
     log:
         "logs/get_edit_distance_between_genes_of_truth_assemblies_and_ref/{{truth_id}}~~~{{ref_id}}.edit_distance.log"
     run:
-        all_mapped_truth_genes_df = pd.read_csv(input.all_mapped_truth_genes, index_col="gene_name", dtype=object)
-        all_mapped_ref_genes_df = pd.read_csv(input.all_mapped_ref_genes, index_col="gene_name", dtype=object)
+        all_mapped_truth_genes_df = pd.read_csv(input.all_mapped_truth_genes, index_col="gene_name", dtype=mapped_genes_dtype_dict)
+        all_mapped_ref_genes_df = pd.read_csv(input.all_mapped_ref_genes, index_col="gene_name", dtype=mapped_genes_dtype_dict)
 
         genes_mapping_to_both_truth_and_ref_df = all_mapped_truth_genes_df.join(all_mapped_ref_genes_df,
                                                 how="inner", lsuffix="_truth_gene", rsuffix="_ref_gene")
@@ -64,6 +65,6 @@ rule concatenate_edit_distance_files:
     log:
         "logs/concatenate_edit_distance_files/all_edit_distances.log"
     run:
-        dfs = [pd.read_csv(file, dtype=object) for file in input.edit_distances_files]
+        dfs = [pd.read_csv(file) for file in input.edit_distances_files]
         concatenated_df = pd.concat(dfs, ignore_index=True)
         concatenated_df.to_csv(output.all_edit_distance_files_concatenated, index=False)
