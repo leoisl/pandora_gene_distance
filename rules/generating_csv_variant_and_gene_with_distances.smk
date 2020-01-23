@@ -1,5 +1,9 @@
 import pandas as pd
-from scripts.dtypes import variant_precision_score_distance_csv_dtype_dict, variant_recall_score_distance_csv_dtype_dict
+from scripts.dtypes import (
+    variant_precision_score_distance_csv_dtype_dict,
+    variant_recall_score_distance_csv_dtype_dict,
+    gene_truth_ref_precision_dtype_dict,
+    gene_truth_ref_recall_dtype_dict)
 
 rule generate_variant_calls_for_precision_folder_if_it_does_not_exist:
     input:
@@ -83,7 +87,9 @@ rule get_gene_truth_ref_precision_proportion_distance:
                     ("observed_precision", "sum"),
                     ("precision_ratio", lambda values: values.sum() / values.count())]
         })
-        gene_truth_ref_precision_proportion_distance.to_csv(output.gene_truth_ref_precision_proportion_distance_file)
+        gene_truth_ref_precision_proportion_distance.reset_index(inplace=True)
+        gene_truth_ref_precision_proportion_distance.columns = ["gene", "truth", "ref", "distance", "max_precision", "observed_precision", "precision_ratio"]
+        gene_truth_ref_precision_proportion_distance.to_csv(output.gene_truth_ref_precision_proportion_distance_file, index=False)
 
 
 
@@ -108,7 +114,9 @@ rule get_gene_truth_ref_recall_proportion_distance:
                     ("observed_recall", "sum"),
                     ("recall_ratio", lambda values: values.sum() / values.count())]
         })
-        gene_truth_ref_recall_proportion_distance.to_csv(output.gene_truth_ref_recall_proportion_distance_file)
+        gene_truth_ref_recall_proportion_distance.reset_index(inplace=True)
+        gene_truth_ref_recall_proportion_distance.columns = ["gene", "truth", "ref", "distance", "max_recall", "observed_recall", "recall_ratio"]
+        gene_truth_ref_recall_proportion_distance.to_csv(output.gene_truth_ref_recall_proportion_distance_file, index=False)
 
 
 rule concat_gene_truth_ref_precision_proportion_distance_files:
@@ -122,9 +130,8 @@ rule concat_gene_truth_ref_precision_proportion_distance_files:
     log:
         "logs/concat_gene_truth_ref_precision_proportion_distance_files/all_gene_truth_ref_precision_proportion_distance.log"
     run:
-        dfs = [pd.read_csv(file, header=[0,1,2]) for file in input.gene_truth_ref_precision_proportion_distance_files]
+        dfs = [pd.read_csv(file, dtype=gene_truth_ref_precision_dtype_dict) for file in input.gene_truth_ref_precision_proportion_distance_files]
         concatenated_df = pd.concat(dfs)
-        concatenated_df.columns = ["gene", "truth", "ref", "distance", "max_precision", "observed_precision", "precision_ratio"]
         concatenated_df.set_index(["gene", "truth", "ref"], inplace=True)
         concatenated_df.to_csv(output.gene_truth_ref_precision_proportion_distance_concatenated)
 
@@ -141,8 +148,7 @@ rule concat_gene_truth_ref_recall_proportion_distance_files:
     log:
         "logs/concat_gene_truth_ref_recall_proportion_distance_files/all_gene_truth_ref_recall_proportion_distance.log"
     run:
-        dfs = [pd.read_csv(file, header=[0,1,2]) for file in input.gene_truth_ref_recall_proportion_distance_files]
+        dfs = [pd.read_csv(file, dtype=gene_truth_ref_recall_dtype_dict) for file in input.gene_truth_ref_recall_proportion_distance_files]
         concatenated_df = pd.concat(dfs)
-        concatenated_df.columns = ["gene", "truth", "ref", "distance", "max_recall", "observed_recall", "recall_ratio"]
         concatenated_df.set_index(["gene", "truth", "ref"], inplace=True)
         concatenated_df.to_csv(output.gene_truth_ref_recall_proportion_distance_concatenated)

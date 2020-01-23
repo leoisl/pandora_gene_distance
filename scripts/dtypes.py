@@ -42,3 +42,25 @@ variant_recall_score_distance_csv_dtype_dict = {
     "recall_score": float,
     "distance": float
 }
+
+
+gene_truth_ref_precision_dtype_dict = {
+  "gene": str,
+  "truth": str,
+  "ref": str,
+  "distance": float,
+  "max_precision": float,
+  "observed_precision": float,
+  "precision_ratio": float,
+}
+
+
+gene_truth_ref_recall_dtype_dict = {
+  "gene": str,
+  "truth": str,
+  "ref": str,
+  "distance": float,
+  "max_recall": float,
+  "observed_recall": float,
+  "recall_ratio": float,
+}

@@ -1,7 +1,7 @@
 import editdistance
 import pandas as pd
 from scripts.utils import reverse_complement
-from scripts.dtypes import mapped_genes_dtype_dict
+from scripts.dtypes import mapped_genes_dtype_dict, edit_distance_dtype_dict
 
 rule get_truth_or_ref_gene_sequences:
     input:
@@ -65,6 +65,6 @@ rule concatenate_edit_distance_files:
     log:
         "logs/concatenate_edit_distance_files/all_edit_distances.log"
     run:
-        dfs = [pd.read_csv(file) for file in input.edit_distances_files]
+        dfs = [pd.read_csv(file, dtype=edit_distance_dtype_dict) for file in input.edit_distances_files]
         concatenated_df = pd.concat(dfs, ignore_index=True)
         concatenated_df.to_csv(output.all_edit_distance_files_concatenated, index=False)
