@@ -11,7 +11,8 @@ rule compute_gene_presence_matrix_based_on_bowtie2:
     run:
         import pandas as pd
         from functools import reduce
-        samples_names = [truth_assembly[:-4] for truth_assembly in input.truth_assemblies]
+        from pathlib import Path
+        samples_names = [Path(truth_assembly).name for truth_assembly in input.truth_assemblies]
         dfs = [pd.read_csv(truth_assembly) for truth_assembly in input.truth_assemblies]
         dfs_with_status_and_gene_name = [df[["status", "gene_name"]] for df in dfs]
         dfs_with_status_and_gene_name = [df.rename(columns={"status": sample_name}) for df, sample_name in zip(dfs_with_status_and_gene_name, samples_names)]
