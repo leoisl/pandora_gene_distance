@@ -103,6 +103,7 @@ files.append(f"{output_folder}/get_gene_truth_ref_recall_proportion_distance/all
 #     files.append(f"{output_folder}/gene_distance_{recall_and_precision}.violinplot.0.01_bins.area.png")
 #     files.append(f"{output_folder}/gene_distance_{recall_and_precision}.violinplot.0.01_bins.count.png")
 
+files.append(f"{output_folder}/gene_presence_matrix/gene_presence_matrix_based_on_bowtie2")
 files = list(set(files))
 
 # ======================================================
@@ -115,5 +116,6 @@ rules_dir = Path("rules/")
 include: str(rules_dir / "indexing_and_mapping.smk")
 include: str(rules_dir / "finding_distance_between_loci_in_assemblies_and_refs.smk")
 include: str(rules_dir / "generating_csv_variant_and_gene_with_distances.smk")
+include: str(rules_dir / "FP_genes.smk")
 # include: str(rules_dir / "plot.smk")
 
