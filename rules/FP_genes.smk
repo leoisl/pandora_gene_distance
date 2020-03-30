@@ -8,5 +8,5 @@ rule compute_gene_presence_matrix_based_on_bowtie2:
         mem_mb = lambda wildcards, attempt: 8000 * 2**(attempt-1)
     log:
         "logs/compute_gene_presence_matrix_based_on_bowtie2.log"
-    script:
+    shell:
         "touch {output.gene_presence_matrix_based_on_bowtie2}"
