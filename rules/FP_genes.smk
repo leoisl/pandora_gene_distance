@@ -45,4 +45,4 @@ rule get_gene_lengths:
                 gene_lengths.append(len(entry.sequence))
 
         df = pd.DataFrame(data = {"gene_name": gene_names, "gene_length": gene_lengths})
-        df.to_csv(output.gene_length_matrix, sep="\t")
+        df.to_csv(output.gene_length_matrix, sep="\t", index=False)
