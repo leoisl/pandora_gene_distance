@@ -104,6 +104,7 @@ files.append(f"{output_folder}/get_gene_truth_ref_recall_proportion_distance/all
 #     files.append(f"{output_folder}/gene_distance_{recall_and_precision}.violinplot.0.01_bins.count.png")
 
 files.append(f"{output_folder}/gene_presence_matrix/gene_presence_matrix_based_on_bowtie2")
+files.append(f"{output_folder}/gene_presence_matrix/gene_length_matrix")
 files = list(set(files))
 
 # ======================================================

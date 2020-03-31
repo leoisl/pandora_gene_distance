@@ -21,3 +21,28 @@ rule compute_gene_presence_matrix_based_on_bowtie2:
         binarized_merged_df["gene_name"] = merged_df["gene_name"]
         binarized_merged_df.set_index(keys=["gene_name"], inplace=True)
         binarized_merged_df.to_csv(output.gene_presence_matrix_based_on_bowtie2, sep="\t")
+
+
+rule get_gene_lengths:
+    input:
+         pandora_vcf_ref = pandora_vcf_ref
+    output:
+         gene_length_matrix = f"{output_folder}/gene_presence_matrix/gene_length_matrix"
+    threads: 1
+    resources:
+        mem_mb = lambda wildcards, attempt: 4000 * 2**(attempt-1)
+    log:
+        "logs/get_gene_lengths.log"
+    run:
+        import pysam
+        import pandas as pd
+
+        with pysam.FastxFile(input.pandora_vcf_ref) as pandora_vcf_ref_filehandler:
+            gene_names = []
+            gene_lengths = []
+            for entry in pandora_vcf_ref_filehandler:
+                gene_names.append(entry.name)
+                gene_lengths.append(len(entry.sequence))
+
+        df = pd.DataFrame(data = {"gene_name": gene_names, "gene_length": gene_lengths})
+        df.to_csv(output.gene_length_matrix, sep="\t")

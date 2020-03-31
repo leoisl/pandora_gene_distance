@@ -42,7 +42,7 @@ rule get_edit_distance_between_genes_of_truth_assemblies_and_ref:
     resources:
         mem_mb = lambda wildcards, attempt: 8000 * 2**(attempt-1)
     log:
-        "logs/get_edit_distance_between_genes_of_truth_assemblies_and_ref/{{truth_id}}~~~{{ref_id}}.edit_distance.log"
+        "logs/get_edit_distance_between_genes_of_truth_assemblies_and_ref/{truth_id}~~~{ref_id}.edit_distance.log"
     run:
         all_mapped_truth_genes_df = pd.read_csv(input.all_mapped_truth_genes, index_col="gene_name", dtype=mapped_genes_dtype_dict)
         all_mapped_ref_genes_df = pd.read_csv(input.all_mapped_ref_genes, index_col="gene_name", dtype=mapped_genes_dtype_dict)
