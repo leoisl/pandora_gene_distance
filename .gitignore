@@ -24,3 +24,11 @@ tmp/
 evaluating_calls_output_pandora_no_denovo_100x/
 
 evaluating_calls_output_snippy/
+
+notebooks/gene_presence_matrix/classification_df_with_gene_length\.csv
+
+notebooks/high_conf_FP_variants/all_variant_calls_probeset_reports_of_pandora_nanopore_no_denovo_100x\.tsv
+
+notebooks/high_conf_FP_variants/calls_breakdown_pandora_NANOPORE_100x\.html
+
+notebooks/high_conf_FP_variants/classification_df_with_gene_length\.csv
