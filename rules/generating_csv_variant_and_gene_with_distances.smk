@@ -37,9 +37,9 @@ rule get_variant_precision_score_distance_csv:
 
 rule generate_truth_calls_folder_if_it_does_not_exist:
     input:
-        original_variant_calls = lambda wildcards: f"{recall_reports}/{wildcards.truth_id}/{coverage}/{tool}/coverage_filter_{coverage_filter}/strand_bias_filter_{strand_bias_filter}/gaps_filter_{gaps_filter}/{wildcards.sample_pair}.report.tsv",
+        original_variant_calls = lambda wildcards: f"{recall_reports}/{wildcards.truth_id}/{coverage}/{tool}/coverage_filter_{coverage_filter}/strand_bias_filter_{strand_bias_filter}/gaps_filter_{gaps_filter}/gt_conf_percentile_0/{wildcards.sample_pair}.report.tsv",
     output:
-        variants_calls =  f"{recall_reports}/{{truth_id}}/{coverage}/{tool}_{{ref_id}}/coverage_filter_{coverage_filter}/strand_bias_filter_{strand_bias_filter}/gaps_filter_{gaps_filter}/{{sample_pair}}.report.tsv"
+        variants_calls =  f"{recall_reports}/{{truth_id}}/{coverage}/{tool}_{{ref_id}}/coverage_filter_{coverage_filter}/strand_bias_filter_{strand_bias_filter}/gaps_filter_{gaps_filter}/gt_conf_percentile_0/{{sample_pair}}.report.tsv"
     threads: 1
     resources:
         mem_mb = lambda wildcards, attempt: 2000 * 2**(attempt-1)
