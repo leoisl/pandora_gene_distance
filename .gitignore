@@ -32,3 +32,7 @@ notebooks/high_conf_FP_variants/all_variant_calls_probeset_reports_of_pandora_na
 notebooks/high_conf_FP_variants/calls_breakdown_pandora_NANOPORE_100x\.html
 
 notebooks/high_conf_FP_variants/classification_df_with_gene_length\.csv
+
+notebooks/gene_presence_matrix/\.ipynb_checkpoints/
+
+notebooks/high_conf_FP_variants/\.ipynb_checkpoints/
