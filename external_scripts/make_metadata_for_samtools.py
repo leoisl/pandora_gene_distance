@@ -4,4 +4,4 @@ samtools_df = df[df.tool.apply(lambda tool: tool.startswith("samtools"))]
 samtools_df = samtools_df[samtools_df.sample_id == "063_STEC"]
 samtools_df["id"] = samtools_df["tool"].apply(lambda tool : tool.replace("samtools_", ""))
 samtools_df["fasta"] = samtools_df["reference"]
-samtools_df[["id", "fasta"]].to_csv("references_snippy.csv", index=False)
+samtools_df[["id", "fasta"]].to_csv("references_samtools.csv", index=False)
