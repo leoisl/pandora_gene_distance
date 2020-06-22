@@ -72,7 +72,7 @@ df_recall = pd.concat([df_pandora_recall, df_snippy_recall, df_samtools_recall],
 
 # # Main helper functions (please skip, go direct to the Results)
 
-# In[25]:
+# In[30]:
 
 
 from matplotlib.lines import Line2D
@@ -217,16 +217,16 @@ def plot_line_in_genes_in_several_bins(df, measure, step, edit_distance_threshol
     df_with_edit_distance_threshold = df.query("edit_distance_labels <= @edit_distance_threshold")
     
     sns.lineplot(x="edit_distance_labels", y=measure, data=df_with_edit_distance_threshold, hue="tool",
-                 estimator=np.median, linewidth=1.0, ci=None, palette=colors, alpha=0.3, ax=ax)
-    ax_2 = fig.add_axes(ax.get_position(), frameon=False)
-    sns.lineplot(x="edit_distance_labels", y=measure, data=df_with_edit_distance_threshold, hue="tool",
-                 estimator=np.mean, linewidth=1.0, ci=None, ax=ax_2, palette=colors, alpha=0.3, legend=False)
-    ax_2.lines[0].set_linestyle(":")
-    ax_2.lines[1].set_linestyle(":")
-    ax_2.get_xaxis().set_visible(False)
-    ax_2.get_yaxis().set_visible(False)
+                 estimator=np.mean, linewidth=1.0, ci=None, palette=colors, alpha=0.3, ax=ax)
+#     ax_2 = fig.add_axes(ax.get_position(), frameon=False)
+#     sns.lineplot(x="edit_distance_labels", y=measure, data=df_with_edit_distance_threshold, hue="tool",
+#                  estimator=np.median, linewidth=1.0, ci=None, ax=ax_2, palette=colors, alpha=0.3, legend=False)
+#     ax_2.lines[0].set_linestyle(":")
+#     ax_2.lines[1].set_linestyle(":")
+#     ax_2.get_xaxis().set_visible(False)
+#     ax_2.get_yaxis().set_visible(False)
 
-    ax.set(xlabel=f"Edit distance (gene bins at each {step*100}%)", ylabel='Recall ratio per bin')    
+    ax.set(xlabel=f"Edit distance (gene bins at each {step*100}%)", ylabel=f'{measure} per bin')    
        
     if output_filepath is not None:
         save_figure(fig, output_filepath)
@@ -294,7 +294,7 @@ plot_violin_for_recall_in_genes_in_several_bins(
     output_filepath="gene_distance_plot_recall.violin.png")
 
 
-# In[27]:
+# In[29]:
 
 
 plot_line_for_recall_in_genes_in_several_bins(
