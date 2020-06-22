@@ -72,7 +72,7 @@ df_recall = pd.concat([df_pandora_recall, df_snippy_recall, df_samtools_recall],
 
 # # Main helper functions (please skip, go direct to the Results)
 
-# In[14]:
+# In[16]:
 
 
 from matplotlib.lines import Line2D
@@ -125,7 +125,7 @@ def plot_lineplot_count_in_datapoints_in_several_bins(count_df, step, display_pl
     ax.set_xlim([0.0, 0.2])
     ax.set_ylabel("Number of datapoints (gene, truth, ref) per bin")
     lineplot = sns.lineplot(x="edit_distance_labels", y="nb_of_datapoints", data=count_df, hue="tool",
-                            palette=colors)
+                            palette=colors, alpha=0.3)
     lineplot.set_yscale("log")
     
     if output_filepath is not None:
@@ -209,10 +209,10 @@ def plot_line_for_precision_in_genes_in_several_bins(df, step, edit_distance_thr
     df_with_edit_distance_threshold = df.query("edit_distance_labels <= @edit_distance_threshold")
     
     sns.lineplot(x="edit_distance_labels", y="precision_ratio", data=df_with_edit_distance_threshold, hue="tool",
-                 estimator=np.median, linewidth=1.0, ci=None, palette=colors, ax=ax)
+                 estimator=np.median, linewidth=1.0, ci=None, palette=colors, alpha=0.3, ax=ax)
     ax_2 = fig.add_axes(ax.get_position(), frameon=False)
     sns.lineplot(x="edit_distance_labels", y="precision_ratio", data=df_with_edit_distance_threshold, hue="tool",
-                 estimator=np.mean, linewidth=1.0, ci=None, ax=ax_2, palette=colors, legend=False)
+                 estimator=np.mean, linewidth=1.0, ci=None, ax=ax_2, palette=colors, alpha=0.3, legend=False)
     ax_2.lines[0].set_linestyle(":")
     ax_2.lines[1].set_linestyle(":")
     ax_2.get_xaxis().set_visible(False)
@@ -269,7 +269,7 @@ edit_distance_threshold_for_recall_where_all_tools_have_at_least_50_datapoints =
 # 
 # **To view it better, open the image in a new tab/window (many details, we have to make it wide to look well at them)**
 
-# In[15]:
+# In[17]:
 
 
 plot_violin_and_line_for_recall_in_genes_in_several_bins(
@@ -281,7 +281,7 @@ plot_violin_and_line_for_recall_in_genes_in_several_bins(
 
 # ## Number of datapoints (1 datapoint = (gene, pair of truths, ref)) in each bin (log scale)
 
-# In[8]:
+# In[18]:
 
 
 plot_lineplot_count_in_datapoints_in_several_bins(count_df_recall_with_step_001, step=0.01,
@@ -292,7 +292,7 @@ plot_lineplot_count_in_datapoints_in_several_bins(count_df_recall_with_step_001,
 
 # ## Precision with 1% bins (show only until all tools have >= 50 datapoints; 1 datapoint = (gene, truth, ref)):
 
-# In[9]:
+# In[19]:
 
 
 edit_distance_threshold_for_precision_where_all_tools_have_at_least_50_datapoints =     get_edit_distance_threshold_where_all_tools_have_at_least_the_min_nb_of_datapoints(
@@ -303,7 +303,7 @@ edit_distance_threshold_for_precision_where_all_tools_have_at_least_50_datapoint
 
 # **OBS: violin and box plots are not shown here because all datapoints are so close to 1.0 that the violin/boxplots produced were even bugged (this was the case when the limits of the y-axis were [0, 1]. Can retry now if you want to see these plots also for precision.**
 
-# In[10]:
+# In[20]:
 
 
 plot_line_for_precision_in_genes_in_several_bins(
@@ -315,7 +315,7 @@ plot_line_for_precision_in_genes_in_several_bins(
 
 # ## Number of datapoints (1 datapoint = (gene, truth, ref)) in each bin (log scale)
 
-# In[11]:
+# In[21]:
 
 
 plot_lineplot_count_in_datapoints_in_several_bins(count_df_precision_with_step_001, step=0.01,
