@@ -32,7 +32,7 @@ import plotly.express as px
 # In[2]:
 
 
-testing = True
+testing = False
 data_path = Path("/hps/nobackup/iqbal/leandro/snippy_calls_gene_distance")
 tools = ["pandora", "snippy", "samtools"]
 colors = ["blue", "red", "green"]
