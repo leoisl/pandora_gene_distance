@@ -15,7 +15,7 @@
 # 
 # All of this is comprised in a snakemake pipeline, and this EDA notebook analyse the pipeline's output to check what is the best way to convey this data.
 
-# In[1]:
+# In[4]:
 
 
 import pandas as pd
@@ -29,11 +29,11 @@ import plotly.express as px
 
 # # Main configs
 
-# In[2]:
+# In[8]:
 
 
+testing = False
 data_path = Path("/hps/nobackup/iqbal/leandro/snippy_calls_gene_distance")
-# data_path = Path("/home/leandro/git/snippy_calls_gene_distance/notebooks/eda_data/hps/nobackup/iqbal/leandro/snippy_calls_gene_distance")
 tools = ["pandora", "snippy", "samtools"]
 colors = ["blue", "red", "green"]
 
@@ -47,10 +47,11 @@ sns.set()
 # 
 # We also have the same stuff for precision.
 
-# In[3]:
+# In[6]:
 
 
 print("Loading...")
+
 df_pandora_precision = pd.read_csv(data_path / "gene_distance_plots_20_way_pandora_illumina_100x/get_gene_truth_ref_precision_proportion_distance/all_gene_truth_ref_precision_proportion_distance.csv")
 df_pandora_precision["tool"] = "pandora"
 df_snippy_precision = pd.read_csv(data_path / "gene_distance_plots_20_way_snippy_illumina_100x/get_gene_truth_ref_precision_proportion_distance/all_gene_truth_ref_precision_proportion_distance.csv")
@@ -70,9 +71,33 @@ df_recall = pd.concat([df_pandora_recall, df_snippy_recall, df_samtools_recall],
 # display(df_recall)
 
 
+# In[10]:
+
+
+# test data
+if testing:
+    df_pandora_precision = pd.read_csv("eda_data/all_gene_truth_ref_precision_proportion_distance.csv")
+    df_pandora_precision["tool"] = "pandora"
+    df_snippy_precision = pd.read_csv("eda_data/all_gene_truth_ref_precision_proportion_distance.csv")
+    df_snippy_precision["tool"] = "snippy"
+    df_samtools_precision = pd.read_csv("eda_data/all_gene_truth_ref_precision_proportion_distance.csv")
+    df_samtools_precision["tool"] = "samtools"
+    df_precision = pd.concat([df_pandora_precision, df_snippy_precision, df_samtools_precision], ignore_index = True)
+    # display(df_precision)
+
+    df_pandora_recall = pd.read_csv("eda_data/all_gene_truth_ref_recall_proportion_distance.csv")
+    df_pandora_recall["tool"] = "pandora"
+    df_snippy_recall = pd.read_csv("eda_data/all_gene_truth_ref_recall_proportion_distance.csv")
+    df_snippy_recall["tool"] = "snippy"
+    df_samtools_recall = pd.read_csv("eda_data/all_gene_truth_ref_recall_proportion_distance.csv")
+    df_samtools_recall["tool"] = "samtools"
+    df_recall = pd.concat([df_pandora_recall, df_snippy_recall, df_samtools_recall], ignore_index = True)
+    # display(df_recall)
+
+
 # # Main helper functions (please skip, go direct to the Results)
 
-# In[30]:
+# In[25]:
 
 
 from matplotlib.lines import Line2D
@@ -211,7 +236,30 @@ def plot_violin_for_recall_in_genes_in_several_bins(df, step, edit_distance_thre
     if display_plot:
         plt.show()
 
+        
+def plot_violin_box_to_axes_for_a_tool(df, tool, ax):
+    df = df.query("tool == @tool")
+    
+    sns.violinplot(x="edit_distance_labels_as_str", y="recall_ratio", data=df,
+                   cut=0, inner=None, linewidth=1.0, ax=ax)
+    ax.set_ylim([-0.05, 1.05])
 
+def plot_violin_for_recall_in_genes_in_several_bins_for_a_tool(df, tool, step, edit_distance_threshold, display_plot=False, output_filepath=None):
+    fig, ax = init_plot((20, 3))
+    df_with_edit_distance_threshold = df.query("edit_distance_labels <= @edit_distance_threshold")
+    sorted_ed_labels = sorted(df_with_edit_distance_threshold["edit_distance_labels_as_str"].unique())
+    
+    
+    plot_violin_box_to_axes_for_a_tool(df_with_edit_distance_threshold, tool, ax)
+    ax.set(xlabel=f"Edit distance (gene bins at each {step*100}%)", ylabel='Recall ratio per bin', title=tool)    
+   
+    if output_filepath is not None:
+        save_figure(fig, output_filepath)
+        
+    if display_plot:
+        plt.show()
+        
+        
 def plot_line_in_genes_in_several_bins(df, measure, step, edit_distance_threshold, display_plot=False, output_filepath=None):
     fig, ax = init_plot((10, 3))
     df_with_edit_distance_threshold = df.query("edit_distance_labels <= @edit_distance_threshold")
@@ -244,7 +292,7 @@ def plot_line_for_recall_in_genes_in_several_bins(df, step, edit_distance_thresh
 
 # # Cached dfs for easier processing (please skip, go direct to the Results)
 
-# In[5]:
+# In[12]:
 
 
 def get_count_df(df):
@@ -267,7 +315,7 @@ count_df_recall_with_step_001 = get_count_df(df_recall_with_step_001)
 
 # ## Recall with 1% bins (show only until all tools have >= 50 datapoints; 1 datapoint = (gene, pair of truths, ref)):
 
-# In[6]:
+# In[13]:
 
 
 print("Plotting...")
@@ -284,7 +332,7 @@ edit_distance_threshold_for_recall_where_all_tools_have_at_least_50_datapoints =
 # 
 # **To view it better, open the image in a new tab/window (many details, we have to make it wide to look well at them)**
 
-# In[26]:
+# In[14]:
 
 
 plot_violin_for_recall_in_genes_in_several_bins(
@@ -292,6 +340,17 @@ plot_violin_for_recall_in_genes_in_several_bins(
     edit_distance_threshold = edit_distance_threshold_for_recall_where_all_tools_have_at_least_50_datapoints,
     display_plot=False,
     output_filepath="gene_distance_plot_recall.violin.png")
+
+
+# In[28]:
+
+
+for tool in tools:
+    plot_violin_for_recall_in_genes_in_several_bins_for_a_tool(
+        df_recall_with_step_001, tool, step=0.01, 
+        edit_distance_threshold = edit_distance_threshold_for_recall_where_all_tools_have_at_least_50_datapoints,
+        display_plot=False,
+        output_filepath=f"gene_distance_plot_recall.violin.{tool}.png")
 
 
 # In[29]:
