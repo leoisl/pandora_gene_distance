@@ -6,7 +6,7 @@ rule bwa_index:
     threads: 1
     log: "{fasta}.bwa_index.log"
     resources:
-        mem_mb = lambda wildcards, attempt: 8000 * 2**(attempt-1)
+        mem_mb = lambda wildcards, attempt: 4000 * 2**(attempt-1)
     shell:
         "bwa index {input.fasta} > {log} 2>&1"
 
@@ -24,9 +24,9 @@ rule bowtie2_build:
     threads: 1
     log: "{fasta}.bowtie2_build.log"
     resources:
-        mem_mb = lambda wildcards, attempt: 8000 * 2**(attempt-1)
+        mem_mb = lambda wildcards, attempt: 4000 * 2**(attempt-1)
     shell:
-        "bowtie2-build {input.fasta} {input.fasta}.bowtie_index"
+        "bowtie2-build {input.fasta} {input.fasta}.bowtie_index > {log} 2>&1"
 
 
 rule map_gene_from_vcf_ref_to_truth_or_ref_using_bowtie:
@@ -38,11 +38,11 @@ rule map_gene_from_vcf_ref_to_truth_or_ref_using_bowtie:
         sam_file = f"{output_folder}/map_gene_from_vcf_ref_to_truth_or_ref/{{gene}}~~~{{id}}.bowtie.sam"
     threads: 1
     resources:
-        mem_mb = lambda wildcards, attempt: 8000 * 2**(attempt-1)
+        mem_mb = lambda wildcards, attempt: 4000 * 2**(attempt-1)
     log:
         "logs/map_gene_from_vcf_ref_to_truth_or_ref/{gene}~~~{id}.log"
     shell:
-        "bowtie2 --very-sensitive --end-to-end -f -x {input.truth_or_ref}.bowtie_index -U {input.gene} -S {output.sam_file}"
+        "bowtie2 --very-sensitive --end-to-end -f -x {input.truth_or_ref}.bowtie_index -U {input.gene} -S {output.sam_file} > {log} 2>&1"
 
 
 rule map_pandora_vcf_ref_to_truth_or_ref_using_bowtie:
@@ -58,7 +58,7 @@ rule map_pandora_vcf_ref_to_truth_or_ref_using_bowtie:
     log:
         "logs/map_pandora_vcf_ref_to_truth_or_ref/{id}.bowtie.log"
     shell:
-        "bowtie2 --very-sensitive --end-to-end -f -x {input.truth_or_ref}.bowtie_index -U {input.pandora_vcf_ref} -S {output.sam_file}"
+        "bowtie2 --very-sensitive --end-to-end -f -x {input.truth_or_ref}.bowtie_index -U {input.pandora_vcf_ref} -S {output.sam_file} > {log} 2>&1"
 
 
 rule map_gene_from_vcf_ref_to_truth_or_ref_using_bwamem:
@@ -70,7 +70,7 @@ rule map_gene_from_vcf_ref_to_truth_or_ref_using_bwamem:
         sam_file = f"{output_folder}/map_gene_from_vcf_ref_to_truth_or_ref/{{gene}}~~~{{id}}.bwa.sam"
     threads: 1
     resources:
-        mem_mb = lambda wildcards, attempt: 8000 * 2**(attempt-1)
+        mem_mb = lambda wildcards, attempt: 4000 * 2**(attempt-1)
     log:
         "logs/map_gene_from_vcf_ref_to_truth_or_ref/{gene}~~~{id}.log"
     shell:
@@ -84,7 +84,7 @@ rule index_fasta_file:
         fasta_index = "{fasta}.fai"
     threads: 1
     resources:
-        mem_mb = lambda wildcards, attempt: 8000 * 2**(attempt-1)
+        mem_mb = lambda wildcards, attempt: 4000 * 2**(attempt-1)
     log: "{fasta}.index_fasta_file.log"
     shell:
-        "samtools faidx {input.fasta}"
+        "samtools faidx {input.fasta} > {log} 2>&1"
