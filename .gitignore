@@ -36,3 +36,17 @@ notebooks/high_conf_FP_variants/classification_df_with_gene_length\.csv
 notebooks/gene_presence_matrix/\.ipynb_checkpoints/
 
 notebooks/high_conf_FP_variants/\.ipynb_checkpoints/
+
+notebooks/gene_plots/\.ipynb_checkpoints/
+
+*.png
+
+notebooks/gene_plots/counted_genes_by_gene_ref_and_ED\.csv
+
+notebooks/gene_plots/grouped_genes_by_ref_and_ED\.csv
+
+notebooks/eda_data/
+
+notebooks/gene_plots/gene_sample_ref_ED.csv
+
+notebooks/gene_plots/gene_sample_ref_ED_nbsamples.csv
