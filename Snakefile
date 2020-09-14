@@ -1,9 +1,17 @@
 from pathlib import Path
-from snakemake.utils import min_version
 import pandas as pd
-import itertools
 
-min_version("5.1.0")
+
+# ======================================================
+# Helper functions
+# ======================================================
+def update_to_absolute_path_core(path_series):
+    return path_series.apply(lambda path: str(Path(path).absolute()))
+def update_to_absolute_path(df, columns):
+    for column in columns:
+        df[column] = update_to_absolute_path_core(df[column])
+    return df
+
 
 # ======================================================
 # Config files
@@ -15,17 +23,15 @@ configfile: "config.yaml"
 # ======================================================
 output_folder = config['output_folder']
 pandora_vcf_ref = config['pandora_vcf_ref']
+pandora_vcf_ref = str(Path(pandora_vcf_ref).absolute())
+pandora_multisample_matrix = config['pandora_multisample_matrix']
+pandora_multisample_matrix = str(Path(pandora_multisample_matrix).absolute())
+pandora_run_that_was_done = config['pandora_run_that_was_done']
 truth_assemblies = pd.read_csv(config["truth_assemblies"])
+truth_assemblies = update_to_absolute_path(truth_assemblies, ["fasta"])
 references = pd.read_csv(config["references"])
+references = update_to_absolute_path(references, ["fasta"])
 assemblies_and_refs = pd.concat([truth_assemblies, references], ignore_index=True)
-precision_reports = f"{config['pandora_eval_config']['output_folder']}/precision/reports_from_probe_mappings"
-recall_reports = f"{config['pandora_eval_config']['output_folder']}/recall/reports"
-tool = config['pandora_eval_config']['tool']
-coverage = config['pandora_eval_config']['coverage']
-coverage_filter = config['pandora_eval_config']['coverage_filter']
-strand_bias_filter = config['pandora_eval_config']['strand_bias_filter']
-gaps_filter = config['pandora_eval_config']['gaps_filter']
-truth_pairs = [(truth_1, truth_2) for truth_1, truth_2 in itertools.combinations(sorted(truth_assemblies["id"]), r=2)]
 
 
 # ======================================================
@@ -68,44 +74,23 @@ files.extend(edit_distances_files)
 all_edit_distance_files_concatenated = f"{output_folder}/edit_distances/all_edit_distances.csv"
 files.append(all_edit_distance_files_concatenated)
 
-# variant distances files
-variant_distance_files = []
-for truth_index, row in truth_assemblies.iterrows():
-    truth_id = row["id"]
-    for ref_index, row in references.iterrows():
-        ref_id = row["id"]
-        variant_distance_files.append(f"{output_folder}/get_variant_precision_score_distance_csv/{truth_id}~~~{ref_id}.get_variant_precision_score_distance.csv")
-        variant_distance_files.append(f"{output_folder}/get_variant_precision_score_distance_csv/{truth_id}~~~{ref_id}.get_variant_precision_score_distance.unmapped.csv")
-
-        for truth_1, truth_2 in [pair for pair in truth_pairs if truth_id in pair]:
-            variant_distance_files.append(f"{output_folder}/get_variant_recall_score_distance_csv/{truth_id}~~~{ref_id}/{truth_1}_and_{truth_2}.get_variant_recall_score_distance.csv")
-            variant_distance_files.append(f"{output_folder}/get_variant_recall_score_distance_csv/{truth_id}~~~{ref_id}/{truth_1}_and_{truth_2}.get_variant_recall_score_distance.unmapped.csv")
-files.extend(variant_distance_files)
-
-gene_truth_ref_precision_proportion_distance_files = []
-gene_truth_ref_recall_proportion_distance_files = []
-for truth_index, row in truth_assemblies.iterrows():
-    truth_id = row["id"]
-    for ref_index, row in references.iterrows():
-        ref_id = row["id"]
-        gene_truth_ref_precision_proportion_distance_files.append(f"{output_folder}/get_gene_truth_ref_precision_proportion_distance/{truth_id}~~~{ref_id}.gene_truth_ref_precision_proportion_distance.csv")
-        for truth_1, truth_2 in [pair for pair in truth_pairs if truth_id in pair]:
-            gene_truth_ref_recall_proportion_distance_files.append(f"{output_folder}/get_gene_truth_ref_recall_proportion_distance/{truth_id}~~~{ref_id}/{truth_1}_and_{truth_2}.gene_truth_ref_recall_proportion_distance.csv")
-files.extend(gene_truth_ref_precision_proportion_distance_files)
-files.extend(gene_truth_ref_recall_proportion_distance_files)
-files.append(f"{output_folder}/get_gene_truth_ref_precision_proportion_distance/all_gene_truth_ref_precision_proportion_distance.csv")
-files.append(f"{output_folder}/get_gene_truth_ref_recall_proportion_distance/all_gene_truth_ref_recall_proportion_distance.csv")
-
-
-# for recall_and_precision in ["recall", "precision"]:
-#     files.append(f"{output_folder}/gene_distance_{recall_and_precision}.lineplot.0.001_bins.png")
-#     files.append(f"{output_folder}/gene_distance_{recall_and_precision}.lineplot.0.01_bins.png")
-#     files.append(f"{output_folder}/gene_distance_{recall_and_precision}.violinplot.0.01_bins.area.png")
-#     files.append(f"{output_folder}/gene_distance_{recall_and_precision}.violinplot.0.01_bins.count.png")
-
 files.append(f"{output_folder}/gene_presence_matrix/gene_presence_matrix_based_on_bowtie2")
 files.append(f"{output_folder}/gene_presence_matrix/gene_length_matrix")
 files = list(set(files))
+
+
+# fp genes data and plots
+files.extend([f"{output_folder}/FP_genes/gene_and_nb_of_FPs_counted.csv",
+              f"{output_folder}/FP_genes/gene_classification.csv",
+              f"{output_folder}/FP_genes/gene_classification.png",
+              f"{output_folder}/FP_genes/gene_classification_by_sample.csv",
+              f"{output_folder}/FP_genes/gene_classification_by_sample.png",
+              f"{output_folder}/FP_genes/gene_classification_by_gene_length.csv",
+              f"{output_folder}/FP_genes/gene_classification_by_gene_length.png",
+              f"{output_folder}/FP_genes/gene_classification_by_gene_length_normalised.csv",
+              f"{output_folder}/FP_genes/gene_classification_by_gene_length_normalised.png"])
+
+
 
 # ======================================================
 # Rules
@@ -116,7 +101,4 @@ rule all:
 rules_dir = Path("rules/")
 include: str(rules_dir / "indexing_and_mapping.smk")
 include: str(rules_dir / "finding_distance_between_loci_in_assemblies_and_refs.smk")
-include: str(rules_dir / "generating_csv_variant_and_gene_with_distances.smk")
 include: str(rules_dir / "FP_genes.smk")
-# include: str(rules_dir / "plot.smk")
-
