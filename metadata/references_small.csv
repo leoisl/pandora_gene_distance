@@ -1,0 +1,4 @@
+id,fasta
+pandora_vcf_ref_no_denovo,sample_data/references/pandora_multisample.vcf_ref.fa
+NZ_CP007592.1,sample_data/references/NZ_CP007592.1.ref.fa
+NZ_MIPU01000001.1,sample_data/references/NZ_MIPU01000001.1.ref.fa
