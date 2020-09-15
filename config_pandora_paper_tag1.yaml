@@ -1,0 +1,4 @@
+output_folder:                 gene_distance_pandora_paper_tag1
+pandora_vcfs:                  metadata/pandora_vcfs_pandora_paper_tag1.csv
+samples:                       metadata/samples_pandora_paper_tag1.csv
+references:                    metadata/references_pandora_paper_tag1.csv
