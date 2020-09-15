@@ -7,6 +7,8 @@ rule bwa_index:
     log: "{fasta}.bwa_index.log"
     resources:
         mem_mb = lambda wildcards, attempt: 4000 * 2**(attempt-1)
+    singularity:
+        "docker://leandroishilima/pandora_gene_distance_indexing_mapping:pandora_paper_tag1"
     shell:
         "bwa index {input.fasta} > {log} 2>&1"
 
@@ -25,6 +27,8 @@ rule bowtie2_build:
     log: "{fasta}.bowtie2_build.log"
     resources:
         mem_mb = lambda wildcards, attempt: 4000 * 2**(attempt-1)
+    singularity:
+        "docker://leandroishilima/pandora_gene_distance_indexing_mapping:pandora_paper_tag1"
     shell:
         "bowtie2-build {input.fasta} {input.fasta}.bowtie_index > {log} 2>&1"
 
@@ -41,6 +45,8 @@ rule map_gene_from_vcf_ref_to_truth_or_ref_using_bowtie:
         mem_mb = lambda wildcards, attempt: 4000 * 2**(attempt-1)
     log:
         "logs/map_gene_from_vcf_ref_to_truth_or_ref/{gene}~~~{id}.log"
+    singularity:
+        "docker://leandroishilima/pandora_gene_distance_indexing_mapping:pandora_paper_tag1"
     shell:
         "bowtie2 --very-sensitive --end-to-end -f -x {input.truth_or_ref}.bowtie_index -U {input.gene} -S {output.sam_file} > {log} 2>&1"
 
@@ -57,6 +63,8 @@ rule map_pandora_vcf_ref_to_truth_or_ref_using_bowtie:
         mem_mb = lambda wildcards, attempt: 8000 * 2**(attempt-1)
     log:
         "logs/map_pandora_vcf_ref_to_truth_or_ref/{id}.bowtie.log"
+    singularity:
+        "docker://leandroishilima/pandora_gene_distance_indexing_mapping:pandora_paper_tag1"
     shell:
         "bowtie2 --very-sensitive --end-to-end -f -x {input.truth_or_ref}.bowtie_index -U {input.pandora_vcf_ref} -S {output.sam_file} > {log} 2>&1"
 
@@ -73,6 +81,8 @@ rule map_gene_from_vcf_ref_to_truth_or_ref_using_bwamem:
         mem_mb = lambda wildcards, attempt: 4000 * 2**(attempt-1)
     log:
         "logs/map_gene_from_vcf_ref_to_truth_or_ref/{gene}~~~{id}.log"
+    singularity:
+        "docker://leandroishilima/pandora_gene_distance_indexing_mapping:pandora_paper_tag1"
     shell:
         "bwa mem {input.truth_or_ref} {input.gene} -t {threads} | samtools view -h -F 2304 > {output.sam_file}"
 
@@ -86,5 +96,7 @@ rule index_fasta_file:
     resources:
         mem_mb = lambda wildcards, attempt: 4000 * 2**(attempt-1)
     log: "{fasta}.index_fasta_file.log"
+    singularity:
+        "docker://leandroishilima/pandora_gene_distance_indexing_mapping:pandora_paper_tag1"
     shell:
         "samtools faidx {input.fasta} > {log} 2>&1"
