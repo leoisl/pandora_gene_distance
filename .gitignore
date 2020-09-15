@@ -54,3 +54,23 @@ notebooks/gene_plots/gene_sample_ref_ED_nbsamples.csv
 /gene_distance_plots_small/
 
 notebooks/gene_distance_plots/.ipynb_checkpoints/
+
+notebooks/WIP/eda_data/
+
+notebooks/WIP/high_conf_FP_variants/.ipynb_checkpoints/
+
+notebooks/WIP/high_conf_FP_variants/gene_distance_20_way_pandora_and_snippy_illumina_100x/
+
+notebooks/WIP/high_conf_FP_variants/pandora_illumina_100x_nodenovo_global_genotyping_4way/
+
+notebooks/WIP/high_conf_FP_variants/pandora_illumina_100x_nodenovo_global_genotyping_4way_no_FPs/
+
+notebooks/WIP/high_conf_FP_variants/pandora_nanopore_100x_nodenovo_4way/
+
+notebooks/WIP/high_conf_FP_variants/FP_variant_calls.csv
+
+*.pickle
+
+notebooks/WIP/genes_in_all_sample.fa
+
+data.zip
