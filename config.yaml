@@ -1,1 +1,4 @@
-config_snippy.yaml
+output_folder:                 gene_distance_small
+pandora_vcfs:                  metadata/pandora_vcfs_small.csv
+samples:                       metadata/samples_small.csv
+references:                    metadata/references_small.csv
