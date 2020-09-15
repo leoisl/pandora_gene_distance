@@ -1,18 +1,3 @@
-rule bwa_index:
-    input:
-        fasta = "{fasta}"
-    output:
-        indexed_fasta = "{fasta}.amb"
-    threads: 1
-    log: "{fasta}.bwa_index.log"
-    resources:
-        mem_mb = lambda wildcards, attempt: 4000 * 2**(attempt-1)
-    singularity:
-        "docker://leandroishilima/pandora_gene_distance_indexing_mapping:pandora_paper_tag1"
-    shell:
-        "bwa index {input.fasta} > {log} 2>&1"
-
-
 rule bowtie2_build:
     input:
         fasta = "{fasta}"
@@ -33,58 +18,22 @@ rule bowtie2_build:
         "bowtie2-build {input.fasta} {input.fasta}.bowtie_index > {log} 2>&1"
 
 
-rule map_gene_from_vcf_ref_to_truth_or_ref_using_bowtie:
-    input:
-        gene = lambda wildcards: f"{output_folder}/genes_from_vcf_ref/{wildcards.gene}.fa",
-        truth_or_ref = lambda wildcards: f"{samples_and_refs.xs(wildcards.id)['fasta']}",
-        truth_or_ref_index = lambda wildcards: f"{samples_and_refs.xs(wildcards.id)['fasta']}.bowtie_index.1.bt2"
-    output:
-        sam_file = f"{output_folder}/map_gene_from_vcf_ref_to_truth_or_ref/{{gene}}~~~{{id}}.bowtie.sam"
-    threads: 1
-    resources:
-        mem_mb = lambda wildcards, attempt: 4000 * 2**(attempt-1)
-    log:
-        "logs/map_gene_from_vcf_ref_to_truth_or_ref/{gene}~~~{id}.log"
-    singularity:
-        "docker://leandroishilima/pandora_gene_distance_indexing_mapping:pandora_paper_tag1"
-    shell:
-        "bowtie2 --very-sensitive --end-to-end -f -x {input.truth_or_ref}.bowtie_index -U {input.gene} -S {output.sam_file} > {log} 2>&1"
-
-
 rule map_pandora_vcf_ref_to_truth_or_ref_using_bowtie:
     input:
-        pandora_vcf_ref = pandora_vcf_ref_to_find_genes,
-        truth_or_ref = lambda wildcards: f"{samples_and_refs.xs(wildcards.id)['fasta']}",
-        truth_or_ref_index = lambda wildcards: f"{samples_and_refs.xs(wildcards.id)['fasta']}.bowtie_index.1.bt2"
+        pandora_vcf_ref = lambda wildcards: f"{pandora_vcfs.xs(wildcards.pandora_id)['fasta']}",
+        truth_or_ref = lambda wildcards: f"{samples_and_refs_and_pandora_vcfs.xs(wildcards.sample_ref_id)['fasta']}",
+        truth_or_ref_index = lambda wildcards: f"{samples_and_refs_and_pandora_vcfs.xs(wildcards.sample_ref_id)['fasta']}.bowtie_index.1.bt2"
     output:
-        sam_file = f"{output_folder}/map_pandora_vcf_ref_to_truth_or_ref/{{id}}.bowtie.sam"
+        sam_file = f"{output_folder}/map_pandora_vcf_ref_to_truth_or_ref/{{pandora_id}}/{{sample_ref_id}}.bowtie.sam"
     threads: 1
     resources:
         mem_mb = lambda wildcards, attempt: 8000 * 2**(attempt-1)
     log:
-        "logs/map_pandora_vcf_ref_to_truth_or_ref/{id}.bowtie.log"
+        "logs/map_pandora_vcf_ref_to_truth_or_ref/{pandora_id}/{sample_ref_id}.bowtie.log"
     singularity:
         "docker://leandroishilima/pandora_gene_distance_indexing_mapping:pandora_paper_tag1"
     shell:
         "bowtie2 --very-sensitive --end-to-end -f -x {input.truth_or_ref}.bowtie_index -U {input.pandora_vcf_ref} -S {output.sam_file} > {log} 2>&1"
-
-
-rule map_gene_from_vcf_ref_to_truth_or_ref_using_bwamem:
-    input:
-        gene = lambda wildcards: f"{output_folder}/genes_from_vcf_ref/{wildcards.gene}.fa",
-        truth_or_ref = lambda wildcards: f"{samples_and_refs.xs(wildcards.id)['fasta']}",
-        truth_or_ref_index = lambda wildcards: f"{samples_and_refs.xs(wildcards.id)['fasta']}.amb"
-    output:
-        sam_file = f"{output_folder}/map_gene_from_vcf_ref_to_truth_or_ref/{{gene}}~~~{{id}}.bwa.sam"
-    threads: 1
-    resources:
-        mem_mb = lambda wildcards, attempt: 4000 * 2**(attempt-1)
-    log:
-        "logs/map_gene_from_vcf_ref_to_truth_or_ref/{gene}~~~{id}.log"
-    singularity:
-        "docker://leandroishilima/pandora_gene_distance_indexing_mapping:pandora_paper_tag1"
-    shell:
-        "bwa mem {input.truth_or_ref} {input.gene} -t {threads} | samtools view -h -F 2304 > {output.sam_file}"
 
 
 rule index_fasta_file:

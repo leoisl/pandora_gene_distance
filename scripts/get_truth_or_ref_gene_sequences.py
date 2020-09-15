@@ -5,7 +5,7 @@ import pandas as pd
 input_pandora_vcf_ref_mapped_to_truth_or_ref_sam_file = snakemake.input.pandora_vcf_ref_mapped_to_truth_or_ref_sam_file
 input_truth_or_ref = snakemake.input.truth_or_ref
 input_truth_or_ref_index = snakemake.input.truth_or_ref_index
-ref_or_truth_id = snakemake.wildcards.id
+ref_or_truth_id = snakemake.wildcards.sample_ref_id
 output_truth_or_ref_gene_sequences = snakemake.output.truth_or_ref_gene_sequences
 
 
