@@ -52,3 +52,5 @@ notebooks/gene_plots/gene_sample_ref_ED.csv
 notebooks/gene_plots/gene_sample_ref_ED_nbsamples.csv
 /sample_data/
 /gene_distance_plots_small/
+
+notebooks/gene_distance_plots/.ipynb_checkpoints/

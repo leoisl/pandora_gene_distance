@@ -32,6 +32,7 @@ truth_assemblies = update_to_absolute_path(truth_assemblies, ["fasta"])
 references = pd.read_csv(config["references"])
 references = update_to_absolute_path(references, ["fasta"])
 assemblies_and_refs = pd.concat([truth_assemblies, references], ignore_index=True)
+nb_of_samples = len(truth_assemblies)
 
 
 # ======================================================
@@ -80,15 +81,26 @@ files = list(set(files))
 
 
 # fp genes data and plots
-files.extend([f"{output_folder}/FP_genes/gene_and_nb_of_FPs_counted.csv",
-              f"{output_folder}/FP_genes/gene_classification.csv",
-              f"{output_folder}/FP_genes/gene_classification.png",
-              f"{output_folder}/FP_genes/gene_classification_by_sample.csv",
-              f"{output_folder}/FP_genes/gene_classification_by_sample.png",
-              f"{output_folder}/FP_genes/gene_classification_by_gene_length.csv",
-              f"{output_folder}/FP_genes/gene_classification_by_gene_length.png",
-              f"{output_folder}/FP_genes/gene_classification_by_gene_length_normalised.csv",
-              f"{output_folder}/FP_genes/gene_classification_by_gene_length_normalised.png"])
+files.extend([
+      f"{output_folder}/FP_genes/gene_and_nb_of_FPs_counted.csv",
+      f"{output_folder}/FP_genes/gene_classification.csv",
+      f"{output_folder}/FP_genes/gene_classification.png",
+      f"{output_folder}/FP_genes/gene_classification_by_sample.csv",
+      f"{output_folder}/FP_genes/gene_classification_by_sample.png",
+      f"{output_folder}/FP_genes/gene_classification_by_gene_length.csv",
+      f"{output_folder}/FP_genes/gene_classification_by_gene_length.png",
+      f"{output_folder}/FP_genes/gene_classification_by_gene_length_normalised.csv",
+      f"{output_folder}/FP_genes/gene_classification_by_gene_length_normalised.png"])
+
+files.extend([
+        f"{output_folder}/gene_distance_plots/distribution_of_genes_per_ed.csv",
+        f"{output_folder}/gene_distance_plots/distribution_of_genes_per_ed_counts.png",
+        f"{output_folder}/gene_distance_plots/distribution_of_genes_per_ed_proportion.png",
+        f"{output_folder}/gene_distance_plots/distribution_of_genes_per_nb_of_samples.csv",
+        expand(f"{output_folder}/gene_distance_plots/distribution_of_genes_per_nb_of_samples_{{nb_of_sample}}.count.png", nb_of_sample=nb_of_samples),
+        expand(f"{output_folder}/gene_distance_plots/distribution_of_genes_per_nb_of_samples_{{nb_of_sample}}.proportion.png", nb_of_sample=nb_of_samples),
+        f"{output_folder}/gene_distance_plots/gene_sample_ref_ED_nbsamples_zam.csv",
+])
 
 
 

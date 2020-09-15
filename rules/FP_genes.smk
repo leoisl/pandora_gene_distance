@@ -73,3 +73,26 @@ rule make_FP_genes_plot:
         notebook="logs/make_FP_genes_plot/make_FP_genes_plot.ipynb"
     notebook:
         "../notebooks/FP_genes/FP_genes.ipynb"
+
+
+rule make_gene_distance_plots:
+    input:
+        all_edit_distances = rules.concatenate_edit_distance_files.output.all_edit_distance_files_concatenated,
+    output:
+        distribution_of_genes_per_ed_plot_data =                      f"{output_folder}/gene_distance_plots/distribution_of_genes_per_ed.csv",
+        distribution_of_genes_per_ed_counts_plot =                    f"{output_folder}/gene_distance_plots/distribution_of_genes_per_ed_counts.png",
+        distribution_of_genes_per_ed_proportion_plot =                f"{output_folder}/gene_distance_plots/distribution_of_genes_per_ed_proportion.png",
+        distribution_of_genes_per_nb_of_samples_plot_data =           f"{output_folder}/gene_distance_plots/distribution_of_genes_per_nb_of_samples.csv",
+        distribution_of_genes_nb_of_samples_count_plots =      expand(f"{output_folder}/gene_distance_plots/distribution_of_genes_per_nb_of_samples_{{nb_of_sample}}.count.png", nb_of_sample=nb_of_samples),
+        distribution_of_genes_nb_of_samples_proportion_plots = expand(f"{output_folder}/gene_distance_plots/distribution_of_genes_per_nb_of_samples_{{nb_of_sample}}.proportion.png", nb_of_sample=nb_of_samples),
+        gene_sample_ref_ED_nbsamples_zam =                            f"{output_folder}/gene_distance_plots/gene_sample_ref_ED_nbsamples_zam.csv",
+    params:
+        nb_of_samples = nb_of_samples,
+        output_folder = output_folder
+    threads: 1
+    resources:
+        mem_mb = lambda wildcards, attempt: 8000 * 2**(attempt-1)
+    log:
+        notebook="logs/make_gene_distance_plots/make_gene_distance_plots.ipynb"
+    notebook:
+        "../notebooks/gene_distance_plots/gene_distance_plots.ipynb"
