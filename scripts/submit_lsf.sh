@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
-JOB_NAME="snakemake_master_process."$(date --iso-8601='minutes')
-LOG_DIR=logs/
-MEMORY=16000
+set -eux
+
+MEMORY=4000
 PROFILE="lsf"
+LOG_DIR=logs/
+JOB_NAME="snakemake_master_process."$(date --iso-8601='minutes')
 
 mkdir -p $LOG_DIR
 
