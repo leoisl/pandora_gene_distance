@@ -36,8 +36,8 @@ rule bowtie2_build:
 rule map_gene_from_vcf_ref_to_truth_or_ref_using_bowtie:
     input:
         gene = lambda wildcards: f"{output_folder}/genes_from_vcf_ref/{wildcards.gene}.fa",
-        truth_or_ref = lambda wildcards: f"{assemblies_and_refs.xs(wildcards.id)['fasta']}",
-        truth_or_ref_index = lambda wildcards: f"{assemblies_and_refs.xs(wildcards.id)['fasta']}.bowtie_index.1.bt2"
+        truth_or_ref = lambda wildcards: f"{samples_and_refs.xs(wildcards.id)['fasta']}",
+        truth_or_ref_index = lambda wildcards: f"{samples_and_refs.xs(wildcards.id)['fasta']}.bowtie_index.1.bt2"
     output:
         sam_file = f"{output_folder}/map_gene_from_vcf_ref_to_truth_or_ref/{{gene}}~~~{{id}}.bowtie.sam"
     threads: 1
@@ -53,9 +53,9 @@ rule map_gene_from_vcf_ref_to_truth_or_ref_using_bowtie:
 
 rule map_pandora_vcf_ref_to_truth_or_ref_using_bowtie:
     input:
-        pandora_vcf_ref = pandora_vcf_ref,
-        truth_or_ref = lambda wildcards: f"{assemblies_and_refs.xs(wildcards.id)['fasta']}",
-        truth_or_ref_index = lambda wildcards: f"{assemblies_and_refs.xs(wildcards.id)['fasta']}.bowtie_index.1.bt2"
+        pandora_vcf_ref = pandora_vcf_ref_to_find_genes,
+        truth_or_ref = lambda wildcards: f"{samples_and_refs.xs(wildcards.id)['fasta']}",
+        truth_or_ref_index = lambda wildcards: f"{samples_and_refs.xs(wildcards.id)['fasta']}.bowtie_index.1.bt2"
     output:
         sam_file = f"{output_folder}/map_pandora_vcf_ref_to_truth_or_ref/{{id}}.bowtie.sam"
     threads: 1
@@ -72,8 +72,8 @@ rule map_pandora_vcf_ref_to_truth_or_ref_using_bowtie:
 rule map_gene_from_vcf_ref_to_truth_or_ref_using_bwamem:
     input:
         gene = lambda wildcards: f"{output_folder}/genes_from_vcf_ref/{wildcards.gene}.fa",
-        truth_or_ref = lambda wildcards: f"{assemblies_and_refs.xs(wildcards.id)['fasta']}",
-        truth_or_ref_index = lambda wildcards: f"{assemblies_and_refs.xs(wildcards.id)['fasta']}.amb"
+        truth_or_ref = lambda wildcards: f"{samples_and_refs.xs(wildcards.id)['fasta']}",
+        truth_or_ref_index = lambda wildcards: f"{samples_and_refs.xs(wildcards.id)['fasta']}.amb"
     output:
         sam_file = f"{output_folder}/map_gene_from_vcf_ref_to_truth_or_ref/{{gene}}~~~{{id}}.bwa.sam"
     threads: 1

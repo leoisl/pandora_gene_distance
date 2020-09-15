@@ -22,25 +22,25 @@ configfile: "config.yaml"
 # Global variables
 # ======================================================
 output_folder = config['output_folder']
-pandora_vcf_ref = config['pandora_vcf_ref']
-pandora_vcf_ref = str(Path(pandora_vcf_ref).absolute())
-pandora_multisample_matrix = config['pandora_multisample_matrix']
-pandora_multisample_matrix = str(Path(pandora_multisample_matrix).absolute())
-pandora_run_that_was_done = config['pandora_run_that_was_done']
-truth_assemblies = pd.read_csv(config["truth_assemblies"])
-truth_assemblies = update_to_absolute_path(truth_assemblies, ["fasta"])
+pandora_vcf_ref_to_find_genes = config['pandora_vcf_ref_to_find_genes']
+pandora_vcf_ref_to_find_genes = str(Path(pandora_vcf_ref_to_find_genes).absolute())
+samples = pd.read_csv(config["samples"])
+samples = update_to_absolute_path(samples, ["fasta"])
 references = pd.read_csv(config["references"])
 references = update_to_absolute_path(references, ["fasta"])
-assemblies_and_refs = pd.concat([truth_assemblies, references], ignore_index=True)
-nb_of_samples = len(truth_assemblies)
+samples_and_refs = pd.concat([samples, references], ignore_index=True)
+pandora_multisample_matrices = pd.read_csv(config["pandora_multisample_matrices"])
+pandora_multisample_matrices = update_to_absolute_path(pandora_multisample_matrices, ["matrix"])
+nb_of_samples = len(samples)
 
 
 # ======================================================
 # Set pandas indexes
 # ======================================================
-truth_assemblies = truth_assemblies.set_index(["id"], drop=False)
+samples = samples.set_index(["id"], drop=False)
 references = references.set_index(["id"], drop=False)
-assemblies_and_refs = assemblies_and_refs.set_index(["id"], drop=False)
+samples_and_refs = samples_and_refs.set_index(["id"], drop=False)
+pandora_multisample_matrices = pandora_multisample_matrices.set_index(["id"], drop=False)
 
 
 # ======================================================
@@ -50,7 +50,7 @@ files = []
 
 # pandora vcf mappings
 pandora_vcf_mapping_files = []
-for index, row in assemblies_and_refs.iterrows():
+for index, row in samples_and_refs.iterrows():
     id = row["id"]
     pandora_vcf_mapping_files.append(f"{output_folder}/map_pandora_vcf_ref_to_truth_or_ref/{id}.bowtie.sam")
 files.extend(pandora_vcf_mapping_files)
@@ -58,7 +58,7 @@ files.extend(pandora_vcf_mapping_files)
 
 # sequences of genes from pandora vcf from the truths/ref
 truth_or_ref_gene_sequences = []
-for index, row in assemblies_and_refs.iterrows():
+for index, row in samples_and_refs.iterrows():
     id = row["id"]
     truth_or_ref_gene_sequences.append(f"{output_folder}/genes_from_truth_or_ref/{id}.csv")
 files.extend(truth_or_ref_gene_sequences)
@@ -66,7 +66,7 @@ files.extend(truth_or_ref_gene_sequences)
 
 # edit distance files
 edit_distances_files = []
-for truth_index, row in truth_assemblies.iterrows():
+for truth_index, row in samples.iterrows():
     truth_id = row["id"]
     for ref_index, row in references.iterrows():
         ref_id = row["id"]
@@ -81,16 +81,17 @@ files = list(set(files))
 
 
 # fp genes data and plots
-files.extend([
-      f"{output_folder}/FP_genes/gene_and_nb_of_FPs_counted.csv",
-      f"{output_folder}/FP_genes/gene_classification.csv",
-      f"{output_folder}/FP_genes/gene_classification.png",
-      f"{output_folder}/FP_genes/gene_classification_by_sample.csv",
-      f"{output_folder}/FP_genes/gene_classification_by_sample.png",
-      f"{output_folder}/FP_genes/gene_classification_by_gene_length.csv",
-      f"{output_folder}/FP_genes/gene_classification_by_gene_length.png",
-      f"{output_folder}/FP_genes/gene_classification_by_gene_length_normalised.csv",
-      f"{output_folder}/FP_genes/gene_classification_by_gene_length_normalised.png"])
+for id in [reference_id for reference_id in references["id"] if reference_id.startswith("pandora")]:
+    files.extend([
+          f"{output_folder}/FP_genes/{id}/gene_and_nb_of_FPs_counted.csv",
+          f"{output_folder}/FP_genes/{id}/gene_classification.csv",
+          f"{output_folder}/FP_genes/{id}/gene_classification.png",
+          f"{output_folder}/FP_genes/{id}/gene_classification_by_sample.csv",
+          f"{output_folder}/FP_genes/{id}/gene_classification_by_sample.png",
+          f"{output_folder}/FP_genes/{id}/gene_classification_by_gene_length.csv",
+          f"{output_folder}/FP_genes/{id}/gene_classification_by_gene_length.png",
+          f"{output_folder}/FP_genes/{id}/gene_classification_by_gene_length_normalised.csv",
+          f"{output_folder}/FP_genes/{id}/gene_classification_by_gene_length_normalised.png"])
 
 files.extend([
         f"{output_folder}/gene_distance_plots/distribution_of_genes_per_ed.csv",

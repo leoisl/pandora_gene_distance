@@ -5,8 +5,8 @@ from scripts.dtypes import mapped_genes_dtype_dict, edit_distance_dtype_dict
 
 rule get_truth_or_ref_gene_sequences:
     input:
-        truth_or_ref = lambda wildcards: f"{assemblies_and_refs.xs(wildcards.id)['fasta']}",
-        truth_or_ref_index = lambda wildcards: f"{assemblies_and_refs.xs(wildcards.id)['fasta']}.fai",
+        truth_or_ref = lambda wildcards: f"{samples_and_refs.xs(wildcards.id)['fasta']}",
+        truth_or_ref_index = lambda wildcards: f"{samples_and_refs.xs(wildcards.id)['fasta']}.fai",
         pandora_vcf_ref_mapped_to_truth_or_ref_sam_file = rules.map_pandora_vcf_ref_to_truth_or_ref_using_bowtie.output.sam_file
     output:
          truth_or_ref_gene_sequences = f"{output_folder}/genes_from_truth_or_ref/{{id}}.csv"

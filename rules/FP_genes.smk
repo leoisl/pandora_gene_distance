@@ -1,6 +1,6 @@
 rule compute_gene_presence_matrix_based_on_bowtie2:
     input:
-        truth_assemblies = expand(f"{output_folder}/genes_from_truth_or_ref/{{truth_assembly}}.csv", truth_assembly=truth_assemblies.index.tolist())
+        truth_assemblies = expand(f"{output_folder}/genes_from_truth_or_ref/{{truth_assembly}}.csv", truth_assembly=samples.index.tolist())
     output:
         gene_presence_matrix_based_on_bowtie2 = f"{output_folder}/gene_presence_matrix/gene_presence_matrix_based_on_bowtie2",
     threads: 1
@@ -25,7 +25,7 @@ rule compute_gene_presence_matrix_based_on_bowtie2:
 
 rule get_gene_lengths:
     input:
-         pandora_vcf_ref = pandora_vcf_ref
+         pandora_vcf_ref = pandora_vcf_ref_to_find_genes
     output:
          gene_length_matrix = f"{output_folder}/gene_presence_matrix/gene_length_matrix"
     threads: 1
@@ -50,27 +50,26 @@ rule get_gene_lengths:
 
 rule make_FP_genes_plot:
     input:
-        pandora_multisample_matrix = pandora_multisample_matrix,
+        pandora_multisample_matrix = lambda wildcards: f"{pandora_multisample_matrices.xs(wildcards.id)['matrix']}",
         gene_presence_matrix_based_on_bowtie2 = rules.compute_gene_presence_matrix_based_on_bowtie2.output.gene_presence_matrix_based_on_bowtie2,
         gene_length_matrix = rules.get_gene_lengths.output.gene_length_matrix,
     output:
-        gene_and_nb_of_FPs_counted_data = f"{output_folder}/FP_genes/gene_and_nb_of_FPs_counted.csv",
-        gene_classification_plot_data = f"{output_folder}/FP_genes/gene_classification.csv",
-        gene_classification_plot = f"{output_folder}/FP_genes/gene_classification.png",
-        gene_classification_by_sample_plot_data = f"{output_folder}/FP_genes/gene_classification_by_sample.csv",
-        gene_classification_by_sample_plot = f"{output_folder}/FP_genes/gene_classification_by_sample.png",
-        gene_classification_by_gene_length_plot_data = f"{output_folder}/FP_genes/gene_classification_by_gene_length.csv",
-        gene_classification_by_gene_length_plot = f"{output_folder}/FP_genes/gene_classification_by_gene_length.png",
-        gene_classification_by_gene_length_normalised_plot_data = f"{output_folder}/FP_genes/gene_classification_by_gene_length_normalised.csv",
-        gene_classification_by_gene_length_normalised_plot = f"{output_folder}/FP_genes/gene_classification_by_gene_length_normalised.png",
+        gene_and_nb_of_FPs_counted_data = f"{output_folder}/FP_genes/{{id}}/gene_and_nb_of_FPs_counted.csv",
+        gene_classification_plot_data = f"{output_folder}/FP_genes/{{id}}/gene_classification.csv",
+        gene_classification_plot = f"{output_folder}/FP_genes/{{id}}/gene_classification.png",
+        gene_classification_by_sample_plot_data = f"{output_folder}/FP_genes/{{id}}/gene_classification_by_sample.csv",
+        gene_classification_by_sample_plot = f"{output_folder}/FP_genes/{{id}}/gene_classification_by_sample.png",
+        gene_classification_by_gene_length_plot_data = f"{output_folder}/FP_genes/{{id}}/gene_classification_by_gene_length.csv",
+        gene_classification_by_gene_length_plot = f"{output_folder}/FP_genes/{{id}}/gene_classification_by_gene_length.png",
+        gene_classification_by_gene_length_normalised_plot_data = f"{output_folder}/FP_genes/{{id}}/gene_classification_by_gene_length_normalised.csv",
+        gene_classification_by_gene_length_normalised_plot = f"{output_folder}/FP_genes/{{id}}/gene_classification_by_gene_length_normalised.png",
     params:
-        samples = truth_assemblies["id"].to_list(),
-        title = pandora_run_that_was_done
+        sample_list = samples["id"].to_list(),
     threads: 1
     resources:
         mem_mb = lambda wildcards, attempt: 8000 * 2**(attempt-1)
     log:
-        notebook="logs/make_FP_genes_plot/make_FP_genes_plot.ipynb"
+        notebook="logs/make_FP_genes_plot/{id}.ipynb"
     notebook:
         "../notebooks/FP_genes/FP_genes.ipynb"
 
