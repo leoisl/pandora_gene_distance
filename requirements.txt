@@ -77,7 +77,7 @@ prometheus-client==0.8.0
 prompt-toolkit==3.0.7
 psutil==5.7.2
 ptyprocess==0.6.0
-PuLP==1.6.8
+PuLP==2.3
 py==1.9.0
 pycparser==2.20
 Pygments==2.7.0
