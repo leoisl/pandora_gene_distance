@@ -2,7 +2,9 @@
 
 A snakemake pipeline that compute plots related to the pandora and reference genes, like FP genes, gene distance plots, etc.
 
-The version used in the pandora paper has tag `pandora_paper_tag1`.
+The version used in the pandora paper review has tag `pandora_paper_update_31_03_2021`.
+
+The version used in the pandora paper submission has tag `pandora_paper_tag1`.
 
 # Running
 
