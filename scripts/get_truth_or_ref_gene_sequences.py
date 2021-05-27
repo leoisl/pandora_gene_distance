@@ -19,7 +19,8 @@ def get_truth_or_ref_gene_sequences(pandora_vcf_ref_mapped_to_truth_or_ref_sam_f
         "contig": [],
         "start": [],
         "stop": [],
-        "sequence": []
+        "sequence": [],
+        "strand": []
     }
 
     # processing
@@ -46,6 +47,13 @@ def get_truth_or_ref_gene_sequences(pandora_vcf_ref_mapped_to_truth_or_ref_sam_f
             stop = int(sam_record.reference_end)
             gene_seq_infos["stop"].append(stop)
 
+            is_reverse_complemented = sam_record.flag & 0x10
+            if is_reverse_complemented:
+                strand = "-"
+            else:
+                strand = "+"
+            gene_seq_infos["strand"].append(strand)
+
             truth_or_ref_contig_sequence = truth_or_ref.fetch(reference=contig)
             sequence = truth_or_ref_contig_sequence[start:stop].upper()
             gene_seq_infos["sequence"].append(sequence)
@@ -55,6 +63,7 @@ def get_truth_or_ref_gene_sequences(pandora_vcf_ref_mapped_to_truth_or_ref_sam_f
             gene_seq_infos["start"].append(-1)
             gene_seq_infos["stop"].append(-1)
             gene_seq_infos["sequence"].append("")
+            gene_seq_infos["strand"].append("")
 
     df = pd.DataFrame(gene_seq_infos)
     df.to_csv(output_truth_or_ref_gene_sequences, index=False)
