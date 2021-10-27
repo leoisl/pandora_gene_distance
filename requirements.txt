@@ -20,7 +20,7 @@ dash-core-components==1.12.0
 dash-html-components==1.1.1
 dash-renderer==1.8.0
 dash-table==4.10.1
-dask==2.26.0
+dask==2021.10.0
 datrie==0.8.2
 decorator==4.4.2
 defusedxml==0.6.0
